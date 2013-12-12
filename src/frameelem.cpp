@@ -1,5 +1,30 @@
 
-#include "frameeelem.h"
+#include "frameelem.h"
+
+bool FrameElem::isLB()
+{
+    return false;
+}
+
+bool FrameElem::isRB()
+{
+    return false;
+}
+
+bool FrameElem::isStar()
+{
+    return false;
+}
+
+bool FrameElem::isType()
+{
+    return false;
+}
+
+string FrameElem::toString()
+{
+    return "";
+}
 
 LBElem::LBElem()
 {
@@ -62,7 +87,7 @@ bool TypeElem::isType()
 
 string TypeElem::toString()
 {
-	return mType.toString();
+	return simpleType.toString();
 }
 
 

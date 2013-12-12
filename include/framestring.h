@@ -14,11 +14,13 @@ class FrameString;
 
 using namespace std;
 
-class FrameString : public vector<FrameElem>
+class FrameString : public vector<FrameElem*>
 {
     public:
 	//! Construct an empty frame string
 	FrameString();
+
+    ~FrameString();
 
 	//! Construct from a list of words, a lexicon and a target type
 	FrameString(Lexicon lex, list<string> words, ComplexType target);	

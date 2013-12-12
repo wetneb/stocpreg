@@ -102,7 +102,7 @@ float SPGParser::computeReductible(int i, int j)
 	// A3b
 	if(isRB(j) && isType(i))
 	{
-		for(int k = j-1; k > i && widx[k] == widx[j]; k--)
+		for(int k = j-1; k > i && widx[k] == widx[j]; k--)
 		    if(isStar(k))
 			return reductible(k+1,j-1);
 	}
@@ -111,13 +111,13 @@ float SPGParser::computeReductible(int i, int j)
 	if(isType(i) && isType(j) && isStar(j-1) && gcon(i,j)
 		&& widx[i] != widx[j])
 	{
-		for(int k = j-1; k > i && widx[k] == widx[j]; k--)
+		for(int k = j-1; k > i && widx[k] == widx[j]; k--)
 		    if(isRB(k-1))
 			return reductible(i+1,k-1);
 	}
 
 	// A4c
-	if(istype(i) && isType(j) &&
+	if(isType(i) && isType(j) &&
 	    isStar(i+1) && isStar(j-1) &&
 	    1 + widx[i] < widx[j] &&
 	    gcon(i,j))
@@ -138,7 +138,7 @@ float SPGParser::computeReductible(int i, int j)
 		{
 		    for(int k2 = j-2; k2 > i && !isLB(k2); k2--)
 		    {
-			totalProb += reductible(k1,k2);
+			    totalProb += reductible(k1,k2);
 		    }
 		}
 	    }
@@ -153,12 +153,13 @@ float SPGParser::computeReductible(int i, int j)
 
 FrameElem SPGParser::get(int pos)
 {
-	return frame[pos];	
+	return *frame[pos];	
 }
 
 SimpleType SPGParser::at(int pos)
 {
-	return ((TypeElem)get(pos)).simpleType;
+    FrameElem* elem = frame[pos];
+	return (dynamic_cast<TypeElem*>(elem))->simpleType;
 }
 
 bool SPGParser::isType(int pos)
@@ -183,7 +184,7 @@ bool SPGParser::isStar(int pos)
 
 bool SPGParser::isUnit(int pos)
 {
-	return get(pos).isUnit();
+	return (isType(pos) && at(pos).isUnit());
 }
 
 // Does the Generalized Contraction rule applies ?

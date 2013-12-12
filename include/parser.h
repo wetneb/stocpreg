@@ -37,6 +37,8 @@ class SPGParser
 	    bool isUnit(int pos);
 	    // Does the Generalized Contraction rule applies ?
 	    bool gcon(int i, int j);
+        // What is the probability that this type has been assigned ?
+        float proba(int i);
 
 	    // MEMBERS
 	   

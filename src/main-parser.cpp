@@ -1,6 +1,7 @@
 
 #include "lexicon.h"
 #include "parser.h"
+#include "pregroup.h"
 
 #include <iostream>
 

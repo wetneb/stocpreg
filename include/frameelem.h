@@ -11,7 +11,7 @@ class FrameElem
 	    virtual bool isRB();
 	    virtual bool isStar();
 	    virtual bool isType();
-	    virtual string toString() = 0;
+	    virtual string toString();
 };
 
 class LBElem : public FrameElem
@@ -41,8 +41,7 @@ class StarElem : public FrameElem
 class TypeElem : public FrameElem
 {
     public:
-	TypeElem(SimpleType t) :
-	    simpleType(t);
+	TypeElem(SimpleType t);
 	bool isType();
 	string toString();
 

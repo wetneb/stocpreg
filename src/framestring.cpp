@@ -7,6 +7,14 @@ FrameString::FrameString()
 
 }
 
+//! Destructor
+FrameString::~FrameString()
+{
+    for(FrameString::iterator it = begin();
+            it != end(); it++)
+        delete (*it);
+}
+
 //! Construct from a list of words, a lexicon and a target type
 FrameString::FrameString(Lexicon lex, list<string> words, ComplexType target)
 {
@@ -18,7 +26,7 @@ FrameString::FrameString(Lexicon lex, list<string> words, ComplexType target)
 		
 		if(lex.count(*word))
 		{
-			LexiconEntry entry = lex.find(*word);
+			LexiconEntry entry = lex.find(*word)->second;
 			for(LexiconEntry::iterator it = entry.begin();
 				it != entry.end(); it++)
 			{
@@ -37,7 +45,7 @@ string FrameString::toString()
 
 	for(FrameString::iterator elem = begin();
 		elem != end(); elem++)
-	    out << elem.toString();
+	    out << (*elem)->toString();
 
 	return out.str();
 }
@@ -55,31 +63,31 @@ float FrameString::getProba(int position)
 
 void FrameString::addLB()
 {
-    push_back(LBElem());
+    push_back(new LBElem());
 }
 
 void FrameString::addRB()
 {
-    push_back(RBElem());
+    push_back(new RBElem());
 }
 
 void FrameString::addStar()
 {
-    push_back(StarElem());
+    push_back(new StarElem());
 }
 
 void FrameString::addSimpleType(SimpleType t)
 {
-    push_back(TypeElem(t));
+    push_back(new TypeElem(t));
 }
 
 void FrameString::addType(ComplexType t, float proba)
 {
     int beginning = size();
     for(ComplexType::iterator it = t.begin();
-	    it != t.end(); it++)
+	    it != t.end(); it++)
     {
-	addSimpleType(*it);
+	    addSimpleType(*it);
     }
 
     mProba[beginning] = proba;
