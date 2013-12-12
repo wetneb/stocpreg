@@ -107,6 +107,11 @@ string SimpleType::toString() const
     return out.str();
 }
 
+ComplexType::ComplexType()
+{
+
+}
+
 ComplexType::ComplexType(SimpleType t)
 {
     push_back(t);
@@ -120,5 +125,12 @@ string ComplexType::toString() const
         out << it->toString();
 
     return out.str();
+}
+
+template<class Archive>
+void ComplexType::serialize(Archive &ar, const unsigned int version)
+{
+    std::list<SimpleType>* ptr = this;
+    ar & *ptr;
 }
 

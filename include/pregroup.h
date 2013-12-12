@@ -73,10 +73,17 @@ class SimpleType
 // A product of basic types
 class ComplexType : public list<SimpleType>
 {
+    friend class boost::serialization::access;
+
     public:
+        ComplexType();
         ComplexType(SimpleType t);
 
 	    string toString() const;
+        
+    private: 
+        template<class Archive>
+        void serialize(Archive &ar, const unsigned int version);
 };
 
 #endif
