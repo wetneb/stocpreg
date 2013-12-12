@@ -27,6 +27,11 @@ bool SimpleType::operator<=(const SimpleType &rhs)
 	));	 
 }
 
+bool SimpleType::isUnit()
+{
+    return baseType == "1";
+}
+
 void SimpleType::serialize(Archive &ar, const unsigned int version)
 {
 	ar & baseType;

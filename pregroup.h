@@ -25,8 +25,6 @@ class Pregroup : public set<pair<string,string> >
 	    Pregroup();
 	
 	    bool less(const string &lhs, const string &rhs) const;
-
-	    static const string unity = "1";
 };
 
 class SimpleType
@@ -37,6 +35,7 @@ class SimpleType
 	SimpleType(string baseType, int exponent);
 
 	bool operator<=(const SimpleType &rhs) const;
+	bool isUnit() const;
 
 
 	int exponent;

@@ -47,7 +47,10 @@ string FrameString::toString()
 // type in the complex type. 
 float FrameString::getProba(int position)
 {
-    return mProba[position];
+    if(mProba.count(position))
+    	return mProba[position];
+
+    return 1.0;
 }
 
 void FrameString::addLB()
