@@ -12,7 +12,7 @@ class SPGParser
 {
 	public:
 	    // Set up the parser for the following frame string
-	    SPGParser(FrameString fs);
+	    SPGParser(FrameString &fs);
 
 	    // Run the parser and get the probability that the whole
 	    // string is reductible.
@@ -28,7 +28,7 @@ class SPGParser
 
 	    /// HELPERS
 	    
-	    FrameElem get(int pos);
+	    FrameElem* get(int pos);
 	    SimpleType at(int pos);
 	    bool isType(int pos);
 	    bool isLB(int pos);

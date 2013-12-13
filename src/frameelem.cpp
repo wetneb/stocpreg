@@ -21,11 +21,6 @@ bool FrameElem::isType()
     return false;
 }
 
-string FrameElem::toString()
-{
-    return "";
-}
-
 LBElem::LBElem()
 {
 	;
@@ -36,9 +31,14 @@ bool LBElem::isLB()
 	return true;
 }
 
-string LBElem::toString()
+string LBElem::toString() const
 {
 	return "<";
+}
+
+FrameElem* LBElem::clone() const
+{
+    return (new LBElem(*this));
 }
 
 
@@ -52,9 +52,14 @@ bool RBElem::isRB()
 	return true;
 }
 
-string RBElem::toString()
+string RBElem::toString() const
 {
 	return ">";
+}
+
+FrameElem* RBElem::clone() const
+{
+    return (new RBElem(*this));
 }
 
 
@@ -68,9 +73,14 @@ bool StarElem::isStar()
 	return true;
 }
 
-string StarElem::toString()
+string StarElem::toString() const
 {
 	return "*";
+}
+
+FrameElem* StarElem::clone() const
+{
+    return (new StarElem(*this));
 }
 
 
@@ -85,9 +95,14 @@ bool TypeElem::isType()
 	return true;
 }
 
-string TypeElem::toString()
+string TypeElem::toString() const
 {
 	return simpleType.toString();
+}
+
+FrameElem* TypeElem::clone() const
+{
+    return (new TypeElem(*this));
 }
 
 

@@ -18,7 +18,11 @@ class LexiconEntry : public std::map<ComplexType, float>
 
     private:
         template<class Archive>
-        void serialize(Archive &ar, const unsigned int version);
+        void serialize(Archive &ar, const unsigned int version)
+        {
+            std::map<ComplexType, float>* ptr = this;
+            ar & *ptr;
+        }
 };
 
 class Lexicon : public std::map<std::string, LexiconEntry>
@@ -26,15 +30,23 @@ class Lexicon : public std::map<std::string, LexiconEntry>
     friend class boost::serialization::access;
 
     public:
+        //! Load a lexicon from a file, or an empty one if no path provided
+        Lexicon(string filename = "");	
+
         //! Load a lexicon from a file
-        Lexicon(string filename);	
+        bool load(string filename);
 
         //! Save it to a file
         void save(string filename);
 
     private:
         template<class Archive>
-        void serialize(Archive &ar, const unsigned int version);
+        void serialize(Archive &ar, const unsigned int version)
+        {
+            std::map<std::string, LexiconEntry>* ptr = this;
+            ar & *ptr;
+        }
+
 };
 
 #endif

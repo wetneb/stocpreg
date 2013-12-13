@@ -34,12 +34,17 @@ void Pregroup::unloadPregroup()
         delete mGlobalPregroup;
 }
 
-bool Pregroup::less(const string &lhs, const string &rhs)
+bool Pregroup::strictlyLess(const string &lhs, const string &rhs)
 {
     if(mGlobalPregroup)
     	return (lhs == rhs || (mGlobalPregroup->count(make_pair(lhs, rhs)) != 0));
 
     return lhs == rhs;
+}
+
+bool Pregroup::less(const string &lhs, const string &rhs)
+{
+    return (lhs == rhs || strictlyLess(lhs, rhs));
 }
 
 SimpleType::SimpleType(string baseType, int exponent) :
@@ -58,6 +63,15 @@ bool SimpleType::operator<=(const SimpleType &rhs) const
 	));	 
 }
 
+bool SimpleType::operator<(const SimpleType &rhs) const
+{
+	return
+    	(exponent == rhs.exponent && (
+	 (exponent % 2 == 0 && Pregroup::strictlyLess(baseType, rhs.baseType)) ||
+	 (exponent % 2 == 1 && Pregroup::strictlyLess(rhs.baseType, baseType))
+	));	 
+}
+
 bool SimpleType::gcon(const SimpleType &rhs) const
 {
     return (exponent + 1 == rhs.exponent) && (*this <= rhs.leftAdjoint());
@@ -70,23 +84,16 @@ bool SimpleType::isUnit() const
 
 SimpleType SimpleType::leftAdjoint() const
 {
-    SimpleType res = *this;
+    SimpleType res(*this);
     res.exponent--;
     return res;
 }
 
 SimpleType SimpleType::rightAdjoint() const
 {
-    SimpleType res = *this;
+    SimpleType res(*this);
     res.exponent++;
     return res;
-}
-
-template<class Archive>
-void SimpleType::serialize(Archive &ar, const unsigned int version)
-{
-	ar & baseType;
-	ar & exponent;
 }
 
 string SimpleType::toString() const
@@ -127,10 +134,29 @@ string ComplexType::toString() const
     return out.str();
 }
 
-template<class Archive>
-void ComplexType::serialize(Archive &ar, const unsigned int version)
+// Adjoints
+ComplexType ComplexType::leftAdjoint() const
 {
-    std::list<SimpleType>* ptr = this;
-    ar & *ptr;
+    ComplexType result;
+    for(ComplexType::const_reverse_iterator it = rbegin(); it != rend(); it++)
+        result.push_back(it->leftAdjoint());
+    return result;
 }
+
+ComplexType ComplexType::rightAdjoint() const
+{
+    ComplexType result;
+    for(ComplexType::const_reverse_iterator it = rbegin(); it != rend(); it++)
+        result.push_back(it->rightAdjoint());
+    return result;
+}
+
+//! Defined only for data storage purposes
+bool ComplexType::operator<(const ComplexType &rhs) const
+{
+    const std::list<SimpleType> *ptr = this, *rhs_p = &rhs;
+    
+    return (*ptr) < (*rhs_p);
+}
+
 

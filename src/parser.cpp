@@ -1,10 +1,10 @@
 #include "parser.h"
 
 // Set up the parser for the following frame string
-SPGParser::SPGParser(FrameString fs) :
-    frame(fs)
+SPGParser::SPGParser(FrameString &fs)
 {
-	n = frame.size();
+    frame = fs;
+	n = fs.size();
 
 	redProba.resize(n);
 	for(int i = 0; i < n; i++)
@@ -38,7 +38,10 @@ float SPGParser::reductible(int i, int j)
 	if(redProba[i][j] >= 0)
 	    return redProba[i][j];
 
+    cout << "computing ["<<i<<"]["<<j<<"]" <<endl;
 	float result = computeReductible(i,j);
+    cout << "["<<i<<"]["<<j<<"] -> " <<result <<endl;
+
 	redProba[i][j] = result;
 	return result;
 }
@@ -47,8 +50,13 @@ float SPGParser::reductible(int i, int j)
 float SPGParser::computeReductible(int i, int j)
 {
 	// Base case
-	if(i == j && isType(i) && isUnit(i))
-	    return proba(i);
+	if(i == j)
+    {
+       if(isType(i) && isUnit(i))
+	        return proba(i);
+       else
+           return 0;
+    }
 
 	if(j == i+1)
 	{
@@ -74,7 +82,7 @@ float SPGParser::computeReductible(int i, int j)
 		// A1a
 		for(int k = i+1; k < j-1; k++)
 		    if(isType(k))
-			totalProb += reductible(i,k)*reductible(k+1,j);
+			    totalProb += reductible(i,k)*reductible(k+1,j);
 
 		//////////////////////////////////////////////////
 		// TODO check that A1a, A1b and A2 are disjoint //
@@ -83,7 +91,7 @@ float SPGParser::computeReductible(int i, int j)
 		// A1b
 		for(int k = i+1; k < j-1; k++)
 		    if(isRB(k) && isLB(k+1))
-			totalProb += reductible(i,k)*reductible(k+1,j);
+			    totalProb += reductible(i,k)*reductible(k+1,j);
 
 		// A2
 		if(gcon(i,j))
@@ -151,35 +159,35 @@ float SPGParser::computeReductible(int i, int j)
 
 /// HELPERS
 
-FrameElem SPGParser::get(int pos)
+FrameElem* SPGParser::get(int pos)
 {
-	return *frame[pos];	
+	return frame[pos];	
 }
 
 SimpleType SPGParser::at(int pos)
 {
-    FrameElem* elem = frame[pos];
+    FrameElem* elem = get(pos);
 	return (dynamic_cast<TypeElem*>(elem))->simpleType;
 }
 
 bool SPGParser::isType(int pos)
 {
-	return get(pos).isType();
+	return get(pos)->isType();
 }
 
 bool SPGParser::isLB(int pos)
 {
-	return get(pos).isLB();	
+	return get(pos)->isLB();	
 }
 
 bool SPGParser::isRB(int pos)
 {
-	return get(pos).isRB();	
+	return get(pos)->isRB();	
 }
 
 bool SPGParser::isStar(int pos)
 {
-	return get(pos).isStar();	
+	return get(pos)->isStar();	
 }
 
 bool SPGParser::isUnit(int pos)

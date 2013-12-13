@@ -1,23 +1,25 @@
 
 #include "lexicon.h"
 
-template<class Archive>
-void LexiconEntry::serialize(Archive &ar, const unsigned int version)
-{
-    std::map<ComplexType, float>* ptr = this;
-    ar & *ptr;
-}
-
-
 Lexicon::Lexicon(string filename)
 {
+    if(filename.size())
+        load(filename);
+    // TODO raise exception on error
+}
+
+bool Lexicon::load(string filename)
+{
+    // TODO catch exceptions
     std::ifstream file(filename.c_str());
 
     {
         boost::archive::text_iarchive ar(file);
 
-       ar >> *this;
+        ar >> *this;
     }
+
+    return true;
 }
 
 void Lexicon::save(string filename)
@@ -31,10 +33,4 @@ void Lexicon::save(string filename)
     }
 }
 
-template<class Archive>
-void Lexicon::serialize(Archive &ar, const unsigned int version)
-{
-    std::map<std::string, LexiconEntry>* ptr = this;
-    ar & *ptr;
-}
 

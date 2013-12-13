@@ -26,6 +26,7 @@ class Pregroup : public set<pair<string,string> >
 {
 	public:
 	    static bool less(const string &lhs, const string &rhs);
+	    static bool strictlyLess(const string &lhs, const string &rhs);
 
         // Comparisons management
         static bool loadPregroup(string filename);
@@ -43,12 +44,13 @@ class Pregroup : public set<pair<string,string> >
 //! A basic type with an exponent
 class SimpleType
 {
-    friend class boost::serialization::access;
-
     public:
-    	SimpleType(string baseType, int exponent);
+    	SimpleType(string baseType = "", int exponent = 0);
 
+        //! Is this type less than this other type ?
 	    bool operator<=(const SimpleType &rhs) const;
+        bool operator<(const SimpleType &rhs) const;
+
         //! Generalized Constraction rule
         bool gcon(const SimpleType &rhs) const;
         //! Is this type the pregroup unit ?
@@ -66,24 +68,41 @@ class SimpleType
 
 
     private:
+        friend class boost::serialization::access;
+
         template<class Archive>
-	    void serialize(Archive &ar, const unsigned int version);
+        void serialize(Archive &ar, const unsigned int version)
+        {
+            ar & baseType;
+            ar & exponent;
+        }
 };
 
 // A product of basic types
 class ComplexType : public list<SimpleType>
 {
-    friend class boost::serialization::access;
-
     public:
         ComplexType();
         ComplexType(SimpleType t);
 
+        // Adjoints
+        ComplexType leftAdjoint() const;
+        ComplexType rightAdjoint() const;
+
+        //! Defined only for data storage purposes
+        bool operator<(const ComplexType &rhs) const;
+
 	    string toString() const;
         
     private: 
+        friend class boost::serialization::access;
+
         template<class Archive>
-        void serialize(Archive &ar, const unsigned int version);
+        void serialize(Archive &ar, const unsigned int version)
+        {
+            std::list<SimpleType>* ptr = this;
+            ar & *ptr;
+        }
 };
 
 #endif

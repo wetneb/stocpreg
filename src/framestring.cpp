@@ -7,12 +7,23 @@ FrameString::FrameString()
 
 }
 
+FrameString::FrameString(const FrameString &rhs) :
+    vector<FrameElem*>()
+{
+    reserve(rhs.size());
+    for(FrameString::iterator it = begin();
+            it != end(); it++)
+        push_back((*it)->clone());
+    cout << "CLONED" << endl;
+}
+
 //! Destructor
 FrameString::~FrameString()
 {
     for(FrameString::iterator it = begin();
             it != end(); it++)
         delete (*it);
+    cout << "DELETED" << endl;
 }
 
 //! Construct from a list of words, a lexicon and a target type
@@ -37,6 +48,10 @@ FrameString::FrameString(Lexicon lex, list<string> words, ComplexType target)
 
 		addRB();
 	}
+
+    addLB();
+    addStar();
+    addType(target.rightAdjoint(), 1.0);
 }
 
 string FrameString::toString()

@@ -19,6 +19,8 @@ class FrameString : public vector<FrameElem*>
     public:
 	//! Construct an empty frame string
 	FrameString();
+    //! Copy constructor
+    FrameString(const FrameString& rhs);
 
     ~FrameString();
 
