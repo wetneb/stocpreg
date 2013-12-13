@@ -11,10 +11,22 @@ FrameString::FrameString(const FrameString &rhs) :
     vector<FrameElem*>()
 {
     reserve(rhs.size());
-    for(FrameString::iterator it = begin();
-            it != end(); it++)
+    for(FrameString::const_iterator it = rhs.begin();
+            it != rhs.end(); it++)
         push_back((*it)->clone());
-    cout << "CLONED" << endl;
+}
+
+FrameString& FrameString::operator=(const FrameString &rhs)
+{
+     for(FrameString::iterator it = begin();
+            it != end(); it++)
+        delete (*it);   
+    reserve(rhs.size());
+
+    for(FrameString::const_iterator it = rhs.begin();
+            it != rhs.end(); it++)
+        push_back((*it)->clone());
+    return *this;
 }
 
 //! Destructor
@@ -23,7 +35,6 @@ FrameString::~FrameString()
     for(FrameString::iterator it = begin();
             it != end(); it++)
         delete (*it);
-    cout << "DELETED" << endl;
 }
 
 //! Construct from a list of words, a lexicon and a target type

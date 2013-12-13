@@ -21,6 +21,7 @@ class FrameString : public vector<FrameElem*>
 	FrameString();
     //! Copy constructor
     FrameString(const FrameString& rhs);
+    FrameString& operator=(const FrameString &rhs);
 
     ~FrameString();
 
