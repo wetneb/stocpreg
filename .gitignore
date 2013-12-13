@@ -11,3 +11,12 @@
 *.lai
 *.la
 *.a
+
+# Autotools stuff
+.deps
+autom4te.cache
+config.log
+aclocal.m4
+config.status
+src/.dirstamp
+
