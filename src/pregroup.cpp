@@ -59,7 +59,7 @@ bool SimpleType::operator<=(const SimpleType &rhs) const
 	return
     	(exponent == rhs.exponent && (
 	 (exponent % 2 == 0 && Pregroup::less(baseType, rhs.baseType)) ||
-	 (exponent % 2 == 1 && Pregroup::less(rhs.baseType, baseType))
+	 (exponent % 2 != 0 && Pregroup::less(rhs.baseType, baseType))
 	));	 
 }
 

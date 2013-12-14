@@ -6,7 +6,13 @@
 #include "pregroup.h"
 #include "framestring.h"
 
+#include <set>
+#include <vector>
+
 class SPGParser;
+class Assignment;
+
+using namespace std;
 
 class SPGParser
 {
@@ -19,12 +25,12 @@ class SPGParser
 	    float run();
 
 	private:
-	    // Compute the probability that the substring [i;j] is
-	    // reductible
-	    float reductible(int i, int j);
+	    // Is there an assignment making the substring [i;j]
+	    // reductible ?
+	    bool reductible(int i, int j);
 
 	    // Do actually the computation
-	    float computeReductible(int i, int j);
+	    set<Assignment> computeReductible(int i, int j);
 
 	    /// HELPERS
 	    
@@ -35,10 +41,17 @@ class SPGParser
 	    bool isRB(int pos);
 	    bool isStar(int pos);
 	    bool isUnit(int pos);
-	    // Does the Generalized Contraction rule applies ?
+	    //! Does the Generalized Contraction rule applies ?
 	    bool gcon(int i, int j);
-        // What is the probability that this type has been assigned ?
+        //! What is the probability that this type has been assigned ?
         float proba(int i);
+        //! What is the probability of this type assignment ?
+        float proba(Assignment a);
+        //! What is the probability of this set of type assignments ?
+        float proba(set<Assignment> s);
+        //! Do the product of two assignment sets :
+        // A x B = { a u b, a \in A, b \in B }
+        static set<Assignment> product(const set<Assignment> &a, const set<Assignment> &b);
 
 	    // MEMBERS
 	   
@@ -47,11 +60,27 @@ class SPGParser
 	    // frame.size()
 	    int n;
 
-	    // probability that [i;j] reduces to 1
-	    vector<vector<float> > redProba;
+        //! Smallest index k such that frame[j] is a type for k <= j <= i (if defined)
+        vector<int> headType;
+
+        // type assignments that make [i;j] reduce to 1
+        vector<vector<set<Assignment> > > assignments;
+
+        // has this set of assignments already been computed ?
+        vector<vector<bool> > computed;
 
 	    // index of words
 	    vector<int> widx;
+};
+
+class Assignment : public set<int>
+{
+    public:
+        //! Create a singleton
+        static Assignment singleton(int val);
+
+        //! Create the union with another set
+        Assignment createUnion(const Assignment &rhs) const;
 };
 
 #endif

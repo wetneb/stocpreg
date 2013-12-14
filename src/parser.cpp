@@ -1,14 +1,25 @@
 #include "parser.h"
 
+
+/*********************************************/
+/* TODO TODO TODO TODO TODO TODO ....... */
+/* REMOVE ALL the as = as + … */
+// it's inefficient
+
+
 // Set up the parser for the following frame string
 SPGParser::SPGParser(FrameString &fs)
 {
     frame = fs;
 	n = fs.size();
 
-	redProba.resize(n);
+	assignments.resize(n);
+    computed.resize(n);
 	for(int i = 0; i < n; i++)
-	    redProba[i].resize(n, -1.0);
+    {
+	    assignments[i].resize(n);
+        computed[i].resize(n, false);
+    }
 
 	widx.resize(n);
 
@@ -20,51 +31,91 @@ SPGParser::SPGParser(FrameString &fs)
 		widx[i] = widx[i-1] + 1;
 	    else widx[i] = widx[i-1];
 	}
+
+    // initialize headType
+    headType.resize(n, -1);
+    int curHeadType = -1;
+    for(int i = 0; i < n; i++)
+    {
+        if(curHeadType == -1 && isType(i))
+            curHeadType = i;
+        else if(curHeadType != -1 && !isType(i))
+            curHeadType = -1;
+        headType[i] = curHeadType;
+    }
 }
 
 // Run the parser and get the probability that the whole
 // string is reductible.
 float SPGParser::run()
 {
-	return reductible(0, n-1);
+    for(int i = 0; i < n; i++)
+        cout << frame.getProba(i) << " ";
+    cout << endl;
+	
+    if(!reductible(0, n-1))
+        return 0.0;
+
+    return proba(assignments[0][n-1]);
 }
 
-// Compute the probability that the substring [i;j] is
-// reductible
-float SPGParser::reductible(int i, int j)
+// Overloading + for set union
+set<Assignment> operator+(const set<Assignment> &lhs, const set<Assignment> &rhs);
+
+// Is there an assignment making the substring [i;j]
+// reductible ?
+bool SPGParser::reductible(int i, int j)
 {
 	if(i < 0 || i >= n || j < 0 || j >= n || i > j)
-	    return 0;
-	if(redProba[i][j] >= 0)
-	    return redProba[i][j];
+	    return false;
+	if(computed[i][j])
+	    return (assignments[i][j].size() > 0);
 
-    cout << "computing ["<<i<<"]["<<j<<"]" <<endl;
-	float result = computeReductible(i,j);
-    cout << "["<<i<<"]["<<j<<"] -> " <<result <<endl;
+    string subframe = frame.toString(i,j);
+	set<Assignment> result = computeReductible(i,j);
+    
+    cout << "["<<i<<"]["<<j<<"] : "<<result.size()<<" : "<<subframe <<endl;
+    assignments[i][j] = result;
+    computed[i][j] = true;
 
-	redProba[i][j] = result;
-	return result;
+	return (result.size() > 0);
 }
 
 // Do actually the computation
-float SPGParser::computeReductible(int i, int j)
+set<Assignment> SPGParser::computeReductible(int i, int j)
 {
+    set<Assignment> as;
+
 	// Base case
-	if(i == j)
+	if(i == j && isType(i) && isUnit(i))
     {
-       if(isType(i) && isUnit(i))
-	        return proba(i);
-       else
-           return 0;
+        as.insert(Assignment::singleton(headType[i]));
+        return as;
     }
 
 	if(j == i+1)
 	{
 		if(isType(i) && isType(j) && gcon(i,j))
-		    return proba(i) * proba(j);
-		else
-		    return 0;
+        {
+            as.insert(Assignment::singleton(headType[i]));
+            // we could add j but headType[i] == headType[j] so it's no use
+        }
+		
+       return as;
 	}
+
+    if(i == 21 && j == 26)
+    {
+        cout << "widx[j] = "<<widx[j]<<endl
+            << "widx[i] = "<<widx[i]<<endl
+            << "gcon(i,j) = "<<gcon(i,j)<<endl;
+        cout << "at(i) = "<<at(i).toString()<<endl
+            << "at(j)^l = "<<at(j).leftAdjoint().toString()<<endl
+            << "i <= j^l = "<<(at(i) <= (at(j).leftAdjoint()))<<endl
+            << "i.exp = "<<at(i).exponent<<endl
+            << "j^l.exp = "<<at(j).leftAdjoint().exponent << endl
+            << "n <= n = "<<Pregroup::less(at(j).leftAdjoint().baseType, at(i).baseType)<<endl;
+    }
 
 	if(isType(i) && isType(j) &&
 		isStar(i+1) &&
@@ -72,47 +123,51 @@ float SPGParser::computeReductible(int i, int j)
 		widx[j] == widx[i]+1 &&
 		gcon(i,j))
 	{
-	    return proba(i)*proba(j);
+        Assignment a = Assignment::singleton(headType[i]);
+        a.insert(headType[j]);
+        as.insert(a);
+        return as;
 	}
 
 	if(isType(i) && isType(j))
 	{
-		float totalProb = 0;
-
 		// A1a
 		for(int k = i+1; k < j-1; k++)
-		    if(isType(k))
-			    totalProb += reductible(i,k)*reductible(k+1,j);
+		    if(isType(k) && reductible(i,k) && reductible(k+1,j))
+                as = as + product(assignments[i][k], assignments[k+1][j]);
 
-		//////////////////////////////////////////////////
-		// TODO check that A1a, A1b and A2 are disjoint //
-		//////////////////////////////////////////////////
-	
 		// A1b
 		for(int k = i+1; k < j-1; k++)
-		    if(isRB(k) && isLB(k+1))
-			    totalProb += reductible(i,k)*reductible(k+1,j);
+		    if(isRB(k) && isLB(k+1) && reductible(i,k) && reductible(k+1,j))
+                as = as + product(assignments[i][k], assignments[k+1][j]);
 
 		// A2
 		if(gcon(i,j))
-		    totalProb += reductible(i+1,j-1)*proba(i)*proba(j);
-		return totalProb;
+        {
+            set<Assignment> a = assignments[i+1][j-1];
+            Assignment rhs;
+            rhs.insert(headType[i]);
+            rhs.insert(headType[j]);
+            set<Assignment> b;
+            b.insert(rhs);
+            as = as + product(a, b);
+        }
 	}
 
 	// A3a
 	if(isLB(i) && isType(j))
 	{
 		for(int k = i+1; k < j && widx[k] == widx[i]; k++)
-		    if(isStar(k))
-			return reductible(k+1,j);
+		    if(isStar(k) && reductible(k+1, j))
+                as = as + assignments[k+1][j];
 	}
 
 	// A3b
 	if(isRB(j) && isType(i))
 	{
 		for(int k = j-1; k > i && widx[k] == widx[j]; k--)
-		    if(isStar(k))
-			return reductible(k+1,j-1);
+		    if(isStar(k) && reductible(i,k-1))
+                as = as + assignments[i][k-1];
 	}
 	
 	// A4b
@@ -120,8 +175,8 @@ float SPGParser::computeReductible(int i, int j)
 		&& widx[i] != widx[j])
 	{
 		for(int k = j-1; k > i && widx[k] == widx[j]; k--)
-		    if(isRB(k-1))
-			return reductible(i+1,k-1);
+		    if(isRB(k-1) && reductible(i+1,k-1))
+                as = as + assignments[i+1][k-1];
 	}
 
 	// A4c
@@ -133,7 +188,8 @@ float SPGParser::computeReductible(int i, int j)
 	    int k1, k2;
 	    for(k1 = i+1; k1 < j && !isRB(k1); k1++);
 	    for(k2 = j-1; k2 > i && !isLB(k2); k2--);
-	   	return reductible(k1,k2);
+        if(reductible(k1,k2))
+            as = as + assignments[k1][k2];
 	}
 
 	// A5
@@ -146,15 +202,14 @@ float SPGParser::computeReductible(int i, int j)
 		{
 		    for(int k2 = j-2; k2 > i && !isLB(k2); k2--)
 		    {
-			    totalProb += reductible(k1,k2);
+                if(isType(k2) && isStar(k2+1) && reductible(k1,k2))
+                    as = as + assignments[k1][k2];
 		    }
 		}
 	    }
-	    return totalProb;
 	}
 
-	// otherwise...
-	return 0.0;
+	return as;
 }
 
 /// HELPERS
@@ -209,5 +264,71 @@ float SPGParser::proba(int i)
 	    return frame.getProba(i);
 	else
 	    return -1.0;
+}
+
+
+//! What is the probability of this type assignment ?
+float SPGParser::proba(Assignment a)
+{
+    float prob = 1.0;
+    for(Assignment::iterator it = a.begin();
+            it != a.end(); it++)
+        prob *= proba(*it);
+    return prob;
+}
+
+//! What is the probability of this set of type assignments ?
+float SPGParser::proba(set<Assignment> s)
+{
+    float prob = 0.0;
+    for(set<Assignment>::iterator it = s.begin();
+            it != s.end(); it++)
+        prob += proba(*it);
+    return prob;
+}
+
+//! Do the product of two assignment sets :
+// A x B = { a u b, a \in A, b \in B }
+set<Assignment> SPGParser::product(const set<Assignment> &a, const set<Assignment> &b)
+{
+    set<Assignment> res;
+    for(set<Assignment>::const_iterator ita = a.begin();
+            ita != a.end(); ita++)
+        for(set<Assignment>::const_iterator itb = b.begin();
+                itb != b.end(); itb++)
+            res.insert(ita->createUnion(*itb));
+
+    return res;
+}
+
+//! Create a singleton
+Assignment Assignment::singleton(int n)
+{
+    Assignment a;
+    a.insert(n);
+    return a;
+}
+
+//! Create the union with another set
+Assignment Assignment::createUnion(const Assignment &rhs) const
+{
+    Assignment a(*this);
+
+    for(Assignment::iterator it = rhs.begin();
+            it != rhs.end(); it++)
+        a.insert(*it);
+
+    return a;
+}
+
+// Overloading + for set union
+set<Assignment> operator+(const set<Assignment> &lhs, const set<Assignment> &rhs)
+{
+    set<Assignment> res(lhs);
+    for(set<Assignment>::iterator it = rhs.begin();
+            it != rhs.end(); it++)
+        res.insert(*it);
+
+    return res;
 }
 
