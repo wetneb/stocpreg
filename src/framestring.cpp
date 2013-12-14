@@ -14,6 +14,8 @@ FrameString::FrameString(const FrameString &rhs) :
     for(FrameString::const_iterator it = rhs.begin();
             it != rhs.end(); it++)
         push_back((*it)->clone());
+
+    mProba = rhs.mProba;
 }
 
 FrameString& FrameString::operator=(const FrameString &rhs)
@@ -26,6 +28,9 @@ FrameString& FrameString::operator=(const FrameString &rhs)
     for(FrameString::const_iterator it = rhs.begin();
             it != rhs.end(); it++)
         push_back((*it)->clone());
+
+    mProba = rhs.mProba;
+
     return *this;
 }
 
@@ -67,11 +72,15 @@ FrameString::FrameString(Lexicon lex, list<string> words, ComplexType target)
 
 string FrameString::toString()
 {
+    return toString(0, size()-1);
+}
+
+string FrameString::toString(int i, int j)
+{
 	ostringstream out;
 
-	for(FrameString::iterator elem = begin();
-		elem != end(); elem++)
-	    out << (*elem)->toString();
+	for(unsigned int k = i; k <= j && k < size(); k++)
+	    out << at(k)->toString();
 
 	return out.str();
 }

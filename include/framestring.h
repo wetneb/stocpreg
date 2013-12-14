@@ -29,6 +29,7 @@ class FrameString : public vector<FrameElem*>
 	FrameString(Lexicon lex, list<string> words, ComplexType target);	
 
 	string toString();
+	string toString(int i, int j);
 	
 	//! Get the probability associated to some complex type.
 	// The position argument indicates the index of the first simple
