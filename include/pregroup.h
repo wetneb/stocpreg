@@ -48,7 +48,8 @@ class SimpleType
     	SimpleType(string baseType = "", int exponent = 0);
 
         //! Is this type less than this other type ?
-	    bool operator<=(const SimpleType &rhs) const;
+	    bool lessThan(const SimpleType &rhs) const;
+        bool strictlyLessThan(const SimpleType &rhs) const;
         bool operator<(const SimpleType &rhs) const;
 
         //! Generalized Constraction rule
@@ -62,6 +63,7 @@ class SimpleType
         SimpleType rightAdjoint() const;
 
         string toString() const;
+        bool fromString(const string &str);
 
 	    int exponent;
 	    string baseType;
@@ -91,8 +93,10 @@ class ComplexType : public list<SimpleType>
 
         //! Defined only for data storage purposes
         bool operator<(const ComplexType &rhs) const;
+//        bool operator==(const ComplexType &rhs) const;
 
 	    string toString() const;
+        bool fromString(const string &str);
         
     private: 
         friend class boost::serialization::access;

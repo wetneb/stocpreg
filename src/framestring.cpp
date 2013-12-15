@@ -16,6 +16,7 @@ FrameString::FrameString(const FrameString &rhs) :
         push_back((*it)->clone());
 
     mProba = rhs.mProba;
+    mComplexTypes = rhs.mComplexTypes;
 }
 
 FrameString& FrameString::operator=(const FrameString &rhs)
@@ -30,6 +31,7 @@ FrameString& FrameString::operator=(const FrameString &rhs)
         push_back((*it)->clone());
 
     mProba = rhs.mProba;
+    mComplexTypes = rhs.mComplexTypes;
 
     return *this;
 }
@@ -126,6 +128,10 @@ void FrameString::addType(ComplexType t, float proba)
     }
 
     mProba[beginning] = proba;
+    mComplexTypes[beginning] = t;
 }
 
-
+ComplexType FrameString::getType(int i)
+{
+    return mComplexTypes[i];
+}

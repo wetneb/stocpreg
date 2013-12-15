@@ -49,14 +49,15 @@ SPGParser::SPGParser(FrameString &fs)
 // string is reductible.
 float SPGParser::run()
 {
-    for(int i = 0; i < n; i++)
-        cout << frame.getProba(i) << " ";
-    cout << endl;
-	
     if(!reductible(0, n-1))
         return 0.0;
 
     return proba(assignments[0][n-1]);
+}
+
+set<Assignment> SPGParser::getAssignments()
+{
+    return assignments[0][n-1];
 }
 
 // Overloading + for set union
@@ -74,7 +75,7 @@ bool SPGParser::reductible(int i, int j)
     string subframe = frame.toString(i,j);
 	set<Assignment> result = computeReductible(i,j);
     
-    cout << "["<<i<<"]["<<j<<"] : "<<result.size()<<" : "<<subframe <<endl;
+   // cout << "["<<i<<"]["<<j<<"] : "<<result.size()<<" : "<<subframe <<endl;
     assignments[i][j] = result;
     computed[i][j] = true;
 
@@ -87,9 +88,10 @@ set<Assignment> SPGParser::computeReductible(int i, int j)
     set<Assignment> as;
 
 	// Base case
-	if(i == j && isType(i) && isUnit(i))
+	if(i == j && isType(i))
     {
-        as.insert(Assignment::singleton(headType[i]));
+        if(isUnit(i))
+            as.insert(Assignment::singleton(headType[i]));
         return as;
     }
 
@@ -103,19 +105,6 @@ set<Assignment> SPGParser::computeReductible(int i, int j)
 		
        return as;
 	}
-
-    if(i == 21 && j == 26)
-    {
-        cout << "widx[j] = "<<widx[j]<<endl
-            << "widx[i] = "<<widx[i]<<endl
-            << "gcon(i,j) = "<<gcon(i,j)<<endl;
-        cout << "at(i) = "<<at(i).toString()<<endl
-            << "at(j)^l = "<<at(j).leftAdjoint().toString()<<endl
-            << "i <= j^l = "<<(at(i) <= (at(j).leftAdjoint()))<<endl
-            << "i.exp = "<<at(i).exponent<<endl
-            << "j^l.exp = "<<at(j).leftAdjoint().exponent << endl
-            << "n <= n = "<<Pregroup::less(at(j).leftAdjoint().baseType, at(i).baseType)<<endl;
-    }
 
 	if(isType(i) && isType(j) &&
 		isStar(i+1) &&

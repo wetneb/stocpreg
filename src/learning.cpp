@@ -16,6 +16,7 @@ Lexicon LexiconLearner::run(vector<list<string> > &sentences, int nbIterations)
         Lexicon counts;
 
         cout << "ITERATION "<<i+1<<endl;
+        float logLikelihood = 0;
 
         // Parsing and counting
         for(unsigned int s = 0; s < sentences.size(); s++)
@@ -24,7 +25,8 @@ Lexicon LexiconLearner::run(vector<list<string> > &sentences, int nbIterations)
             cout << fs.toString() << endl;
 
             SPGParser ps(fs);
-            cout << "Probability : "<<ps.run()<<endl;
+            float totalProba = ps.run();
+            cout << "Probability : "<<totalProba<<endl;
             set<Assignment> as = ps.getAssignments();
             for(set<Assignment>::iterator it = as.begin();
                     it != as.end(); it++)
@@ -45,11 +47,15 @@ Lexicon LexiconLearner::run(vector<list<string> > &sentences, int nbIterations)
                 }
             }
             cout << endl;
+
+            logLikelihood += totalProba * log(totalProba);
         }
 
         // Normalizing
         counts.normalize();
         mLex = counts;
+        
+        cout << "Perplexity (before last step): "<<-logLikelihood<<endl;
     }
 
     return mLex;

@@ -4,7 +4,7 @@ Pregroup* Pregroup::mGlobalPregroup = NULL;
 
 Pregroup::Pregroup()
 {
-
+    
 }
 
 Pregroup::~Pregroup()
@@ -54,7 +54,7 @@ SimpleType::SimpleType(string baseType, int exponent) :
     ;
 }
 
-bool SimpleType::operator<=(const SimpleType &rhs) const
+bool SimpleType::lessThan(const SimpleType &rhs) const
 {
 	return
     	(exponent == rhs.exponent && (
@@ -63,7 +63,7 @@ bool SimpleType::operator<=(const SimpleType &rhs) const
 	));	 
 }
 
-bool SimpleType::operator<(const SimpleType &rhs) const
+bool SimpleType::strictlyLessThan(const SimpleType &rhs) const
 {
 	return
     	(exponent == rhs.exponent && (
@@ -72,9 +72,14 @@ bool SimpleType::operator<(const SimpleType &rhs) const
 	));	 
 }
 
+bool SimpleType::operator<(const SimpleType &rhs) const
+{
+    return (exponent < rhs.exponent || (exponent == rhs.exponent && baseType < rhs.baseType));
+}
+
 bool SimpleType::gcon(const SimpleType &rhs) const
 {
-    return (exponent + 1 == rhs.exponent) && (*this <= rhs.leftAdjoint());
+    return (exponent + 1 == rhs.exponent) && (this->lessThan(rhs.leftAdjoint()));
 }
 
 bool SimpleType::isUnit() const
@@ -112,6 +117,34 @@ string SimpleType::toString() const
     }
 
     return out.str();
+}
+
+bool SimpleType::fromString(const string &str)
+{
+    istringstream in(str);
+    
+    baseType = "";
+    char c = '\0';
+    in >> c;
+    while(in.good() && c != '(')
+    {
+        baseType += c;
+        in >> c;
+    }
+    
+    exponent = 0;
+    if(in.good())
+    {
+        in >> c;
+        while(in.good() && (c == 'r' || c == 'l'))
+        {
+            exponent += (c == 'r' ? 1 : -1);
+            in >> c;
+        }
+        return (c == ')');
+    }
+    else
+        return true;
 }
 
 ComplexType::ComplexType()
@@ -158,5 +191,37 @@ bool ComplexType::operator<(const ComplexType &rhs) const
     
     return (*ptr) < (*rhs_p);
 }
+
+bool ComplexType::fromString(const string &str)
+{
+    istringstream in(str);
+
+    clear();
+    SimpleType st;
+    while(in.good())
+    {
+        string tp;
+        in >> tp;
+        if(tp.size())
+        {
+            if(!st.fromString(tp))
+            {
+                cerr << "Error while parsing the simple type \""<<tp<<"\"" << endl;
+                return false;
+            }
+            push_back(st);
+        }
+    }
+    return true;
+}
+
+/*
+bool ComplexType::operator==(const ComplexType &rhs) const
+{
+    const std::list<SimpleType> *ptr = this, *rhs_p = &rhs;
+
+    return (*ptr) == (*rhs_p);
+}
+*/
 
 

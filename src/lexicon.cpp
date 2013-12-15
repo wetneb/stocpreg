@@ -33,4 +33,129 @@ void Lexicon::save(string filename)
     }
 }
 
+void Lexicon::normalize()
+{
+    for(Lexicon::iterator it = begin();
+            it != end(); it++)
+        it->second.normalize();
+}
+
+string Lexicon::toString() const
+{
+    ostringstream out;
+
+    for(Lexicon::const_iterator it = begin();
+            it != end(); it++)
+        out << it->first << "\n" << it->second.toString() << "\n";
+
+    return out.str();
+}
+
+LexiconEntry::LexiconEntry()
+{
+    ;
+}
+
+void LexiconEntry::genComplexType(ComplexType base, int remainingSimple, int nbBaseTypes, int maxOrder, bool productiveIncluded)
+{
+    if(remainingSimple == 0)
+    {
+        if(productiveIncluded)
+           (*this)[base] = 1.0;
+    }
+    else
+    {
+        for(int exp = -maxOrder; exp <= maxOrder; exp++)
+        {
+            for(int bt = 0; bt < nbBaseTypes; bt++)
+            {
+                ComplexType ct(base);
+                ct.push_back(SimpleType(string(1,nthBaseType(bt)),exp));
+                genComplexType(ct, remainingSimple-1, nbBaseTypes, maxOrder, productiveIncluded || (exp % 2 == 0));
+            }
+        }
+    }
+}
+
+//! Build a lexicon with lots of types in it, namely all the types made of
+// - at most maxLength simple types
+// - nbBaseTypes distinct base types
+// - order at most maxOrder
+// if atLeastOneProductive is set, then all the complex types contain at least
+// one productive type.
+LexiconEntry::LexiconEntry(int nbBaseTypes, int maxLength, int maxOrder, bool atLeastOneProductive)
+{
+    for(int length = 1; length <= maxLength; length++)
+    {
+        ComplexType ct;
+        genComplexType(ct, length, nbBaseTypes, maxOrder, !atLeastOneProductive);
+    }
+    normalize();
+}
+
+char LexiconEntry::nthBaseType(int n)
+{
+    return (n == 0 ? 's' : 'a' + (n-1));
+}
+
+void LexiconEntry::normalize()
+{
+    float sum = 0;
+    for(LexiconEntry::iterator it = begin();
+            it != end(); it++)
+        sum += it->second;
+    if(sum > 0)
+    {
+        for(LexiconEntry::iterator it = begin();
+                it != end(); it++)
+            it->second /= sum;
+    }
+}
+
+void LexiconEntry::addCount(ComplexType t, float value)
+{
+    if(find(t) != end())
+    {
+        float oldval = (*this)[t];
+        erase(t);
+        (*this)[t] = oldval + value;
+    }
+    else
+        (*this)[t] = value;
+}
+
+string LexiconEntry::toString() const
+{
+    ostringstream out;
+
+    for(LexiconEntry::const_iterator it = begin();
+            it != end(); it++)
+        out << it->first.toString() << " : " << it->second << "\n";
+
+    return out.str();
+}
+
+bool LexiconEntry::fromFile(const string &filename)
+{ // this does not use boost serialization
+    ifstream fs(filename.c_str());
+    if(!fs.good())
+        return false;
+    
+    while(fs.good())
+    {
+        string line;
+        getline(fs, line);
+        if(line.size())
+        {
+            ComplexType ct;
+            if(!ct.fromString(line))
+            {
+                cerr << "Error while parsing the complex type \""<<line<<"\""<<endl;
+                return false;
+            }
+            (*this)[ct] = 1.0;
+        }
+    }
+    normalize();    
+}
 

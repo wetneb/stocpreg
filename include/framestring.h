@@ -36,6 +36,9 @@ class FrameString : public vector<FrameElem*>
 	// type in the complex type. 
 	float getProba(int position);
 
+    //! Get the complex type starting at position i
+    ComplexType getType(int i);
+
     protected:
 	void addLB();
 
@@ -49,6 +52,7 @@ class FrameString : public vector<FrameElem*>
 
      private:
 	map<int, float> mProba;
+	map<int, ComplexType> mComplexTypes;
 };
 
 #endif

@@ -76,7 +76,7 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = parser$(EXEEXT)
+bin_PROGRAMS = parser$(EXEEXT) learner$(EXEEXT)
 subdir = .
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) depcomp \
@@ -93,11 +93,17 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
+am_learner_OBJECTS = src/frameelem.$(OBJEXT) src/framestring.$(OBJEXT) \
+	src/main-learner.$(OBJEXT) src/learning.$(OBJEXT) \
+	src/parser.$(OBJEXT) src/pregroup.$(OBJEXT) \
+	src/lexicon.$(OBJEXT)
+learner_OBJECTS = $(am_learner_OBJECTS)
+am__DEPENDENCIES_1 =
+learner_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_parser_OBJECTS = src/frameelem.$(OBJEXT) src/framestring.$(OBJEXT) \
 	src/main-parser.$(OBJEXT) src/parser.$(OBJEXT) \
 	src/pregroup.$(OBJEXT) src/lexicon.$(OBJEXT)
 parser_OBJECTS = $(am_parser_OBJECTS)
-am__DEPENDENCIES_1 =
 parser_DEPENDENCIES = $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
 am__v_P_ = $(am__v_P_@AM_DEFAULT_V@)
@@ -140,8 +146,8 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(parser_SOURCES)
-DIST_SOURCES = $(parser_SOURCES)
+SOURCES = $(learner_SOURCES) $(parser_SOURCES)
+DIST_SOURCES = $(learner_SOURCES) $(parser_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -274,6 +280,8 @@ top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -I$(top_srcdir)/include $(BOOST_CFLAGS)
 parser_SOURCES = include/frameelem.h include/framestring.h include/lexicon.h include/parser.h include/pregroup.h src/frameelem.cpp src/framestring.cpp src/main-parser.cpp src/parser.cpp src/pregroup.cpp src/lexicon.cpp 
 parser_LDADD = $(BOOST_LIBS)
+learner_SOURCES = include/frameelem.h include/framestring.h include/lexicon.h include/parser.h include/pregroup.h include/learning.h src/frameelem.cpp src/framestring.cpp src/main-learner.cpp src/learning.cpp src/parser.cpp src/pregroup.cpp src/lexicon.cpp 
+learner_LDADD = $(BOOST_LIBS)
 all: all-am
 
 .SUFFIXES:
@@ -364,13 +372,21 @@ src/frameelem.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/framestring.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
-src/main-parser.$(OBJEXT): src/$(am__dirstamp) \
+src/main-learner.$(OBJEXT): src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
+src/learning.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/parser.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/pregroup.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/lexicon.$(OBJEXT): src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
+
+learner$(EXEEXT): $(learner_OBJECTS) $(learner_DEPENDENCIES) $(EXTRA_learner_DEPENDENCIES) 
+	@rm -f learner$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(learner_OBJECTS) $(learner_LDADD) $(LIBS)
+src/main-parser.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 
 parser$(EXEEXT): $(parser_OBJECTS) $(parser_DEPENDENCIES) $(EXTRA_parser_DEPENDENCIES) 
@@ -386,7 +402,9 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/frameelem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/framestring.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/learning.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/lexicon.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/main-learner.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/main-parser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/parser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/pregroup.Po@am__quote@

@@ -24,6 +24,13 @@ class SPGParser
 	    // string is reductible.
 	    float run();
 
+        //! Retrieve the set of assignments making the sentence valid
+        set<Assignment> getAssignments();
+        //! What is the probability of this type assignment ?
+        float proba(Assignment a);
+        //! What is the probability of this set of type assignments ?
+        float proba(set<Assignment> s);
+
 	private:
 	    // Is there an assignment making the substring [i;j]
 	    // reductible ?
@@ -45,10 +52,6 @@ class SPGParser
 	    bool gcon(int i, int j);
         //! What is the probability that this type has been assigned ?
         float proba(int i);
-        //! What is the probability of this type assignment ?
-        float proba(Assignment a);
-        //! What is the probability of this set of type assignments ?
-        float proba(set<Assignment> s);
         //! Do the product of two assignment sets :
         // A x B = { a u b, a \in A, b \in B }
         static set<Assignment> product(const set<Assignment> &a, const set<Assignment> &b);
