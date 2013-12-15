@@ -15,13 +15,14 @@ int main(int argc, char** argv)
     SimpleType s("s", 0), n("n",0), nl("n",-1), nr("n",1), unit("1",0);
 
 
-	if(argc != 4)
+	if(argc != 4 && argc != 5)
 	{
 	    cerr << "Usage:\n"
-		 << argv[0] << " [types] [sentences] [nb-iterations]\n"
+		 << argv[0] << " [types] [sentences] [nb-iterations] (verbosity)\n"
 		 << endl;
 	    return 1;
 	}
+    bool verbose = (argc == 5);
 
     vector<list<string> > sentences;
     ifstream sentFile(argv[2]);
@@ -42,8 +43,12 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    cout << "Default lexicon:"<<endl
-        <<defaultEntry.toString()<<endl;
+    if(verbose)
+    {
+        cout << "Default lexicon:"<<endl
+            <<defaultEntry.toString()<<endl;
+    }
+
     Lexicon lex;
 
 	while(sentFile.good())
@@ -92,9 +97,11 @@ int main(int argc, char** argv)
         lex[words[i]] = entry;
         */
     LexiconLearner learner(lex);
-    Lexicon finalLex = learner.run(sentences, nbIterations);
+    Lexicon finalLex = learner.run(sentences, nbIterations, verbose);
 
-    cout << finalLex.toString() << endl;
+    ofstream outLexicon("trained_lexicon");
+    outLexicon << finalLex.toString() << endl;
+    outLexicon.close();
 
 	return 0;
 }

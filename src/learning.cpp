@@ -7,7 +7,7 @@ LexiconLearner::LexiconLearner(Lexicon &initLex) :
     ;
 }
 
-Lexicon LexiconLearner::run(vector<list<string> > &sentences, int nbIterations)
+Lexicon LexiconLearner::run(vector<list<string> > &sentences, int nbIterations, bool verbose)
 {
     SimpleType targetType("s", 0);
 
@@ -22,11 +22,13 @@ Lexicon LexiconLearner::run(vector<list<string> > &sentences, int nbIterations)
         for(unsigned int s = 0; s < sentences.size(); s++)
         {
             FrameString fs(mLex, sentences[s], targetType);
-            cout << fs.toString() << endl;
+            if(verbose)
+                cout << fs.toString() << endl;
 
             SPGParser ps(fs);
             float totalProba = ps.run();
-            cout << "Probability : "<<totalProba<<endl;
+            if(verbose)
+                cout << "Probability : "<<totalProba<<endl;
             set<Assignment> as = ps.getAssignments();
             for(set<Assignment>::iterator it = as.begin();
                     it != as.end(); it++)
@@ -34,22 +36,28 @@ Lexicon LexiconLearner::run(vector<list<string> > &sentences, int nbIterations)
                 Assignment a = *it;
                 float proba = ps.proba(a);
                 list<string>::iterator word = sentences[s].begin();
-                cout << "Assignment : "<<endl;
+                if(verbose)
+                    cout << "Assignment : "<<endl;
                 for(Assignment::iterator typ = a.begin();
                         typ != a.end(); typ++)
                 {
                     if(word != sentences[s].end())
                     {
-                        cout << *word << " -> "<< fs.getType(*typ).toString() << " (type id "<<*typ<<")"<<endl;
+                        if(verbose)
+                            cout << *word << " -> "<< fs.getType(*typ).toString() << " (type id "<<*typ<<")"<<endl;
                         counts[*word].addCount(fs.getType(*typ), proba);
                         word++;
                     }
                 }
             }
-            cout << endl;
+            if(verbose)
+                cout << endl;
+            else cout << "." << flush;
 
             logLikelihood += totalProba * log(totalProba);
         }
+        if(!verbose)
+            cout << endl;
 
         // Normalizing
         counts.normalize();
