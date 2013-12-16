@@ -13,8 +13,10 @@ Lexicon LexiconLearner::run(vector<list<string> > &sentences, int nbIterations, 
 
     for(int i = 0; i < nbIterations; i++)
     {
+        /*
         if(i > 0)
             verbose = false;
+        // */
 
         Lexicon counts;
 
@@ -40,7 +42,7 @@ Lexicon LexiconLearner::run(vector<list<string> > &sentences, int nbIterations, 
                 float proba = ps.proba(a);
                 list<string>::iterator word = sentences[s].begin();
                 if(verbose)
-                    cout << "Assignment : "<<endl;
+                    cout << "Assignment (proba "<<proba<<"): "<<endl;
                 for(Assignment::iterator typ = a.begin();
                         typ != a.end(); typ++)
                 {
@@ -57,13 +59,14 @@ Lexicon LexiconLearner::run(vector<list<string> > &sentences, int nbIterations, 
                 cout << endl;
             else cout << "." << flush;
 
-            logLikelihood += totalProba * log(totalProba);
+            logLikelihood += log(totalProba);
         }
         if(!verbose)
             cout << endl;
 
         // Normalizing
         counts.normalize();
+
         mLex = counts;
         
         cout << "Perplexity (before last step): "<<-logLikelihood<<endl;
