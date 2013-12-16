@@ -13,6 +13,9 @@ Lexicon LexiconLearner::run(vector<list<string> > &sentences, int nbIterations, 
 
     for(int i = 0; i < nbIterations; i++)
     {
+        if(i > 0)
+            verbose = false;
+
         Lexicon counts;
 
         cout << "ITERATION "<<i+1<<endl;

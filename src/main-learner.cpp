@@ -61,41 +61,18 @@ int main(int argc, char** argv)
 		string currentWord;
 		while(inputWords.good())
 		{
-			inputWords >> currentWord;
-            if(currentWord != "")
+	        inputWords >> currentWord;
+            if(currentWord.size())
             {
                 lex[currentWord] = defaultEntry;
 			    sentence.push_back(currentWord);
             }
 		}
+        
         if(sentence.size() > 0)
             sentences.push_back(sentence);
     }
 
-    /*
-	Lexicon lex; //(argv[1])
-
-    ComplexType nsn(nr);
-    nsn.push_back(s);
-    nsn.push_back(nl);
-
-    ComplexType ns(nr);
-    ns.push_back(s);
-
-    vector<string> words;
-    words.push_back("John");
-    words.push_back("Mary");
-    words.push_back("bothers");
-    words.push_back("walks");
-
-    LexiconEntry entry;
-    entry[n] = 1.0 / 4;
-    entry[nsn] = 1.0 / 4;
-    entry[ns] = 1.0 / 4;
-    entry[unit] = 1.0 / 4;
-    for(unsigned int i = 0; i < words.size(); i++)
-        lex[words[i]] = entry;
-        */
     LexiconLearner learner(lex);
     Lexicon finalLex = learner.run(sentences, nbIterations, verbose);
 
