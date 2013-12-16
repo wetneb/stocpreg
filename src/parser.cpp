@@ -75,7 +75,7 @@ bool SPGParser::reductible(int i, int j)
     string subframe = frame.toString(i,j);
 	set<Assignment> result = computeReductible(i,j);
     
-   // cout << "["<<i<<"]["<<j<<"] : "<<result.size()<<" : "<<subframe <<endl;
+    // cout << "["<<i<<"]["<<j<<"] : "<<result.size()<<" : "<<subframe <<endl;
     assignments[i][j] = result;
     computed[i][j] = true;
 
@@ -131,7 +131,7 @@ set<Assignment> SPGParser::computeReductible(int i, int j)
                 as = as + product(assignments[i][k], assignments[k+1][j]);
 
 		// A2
-		if(gcon(i,j))
+		if(gcon(i,j) && reductible(i+1,j-1))
         {
             set<Assignment> a = assignments[i+1][j-1];
             Assignment rhs;
@@ -158,7 +158,16 @@ set<Assignment> SPGParser::computeReductible(int i, int j)
 		    if(isStar(k) && reductible(i,k-1))
                 as = as + assignments[i][k-1];
 	}
-	
+
+    // A4a
+	if(isType(i) && isType(j) && isStar(i+1) && gcon(i,j)
+		&& widx[i] != widx[j])
+	{
+		for(int k = i+1; k < j && widx[k] == widx[i]; k++)
+		    if(isLB(k+1) && reductible(k+1,j-1))
+                as = as + assignments[k+1][j-1];
+	}
+
 	// A4b
 	if(isType(i) && isType(j) && isStar(j-1) && gcon(i,j)
 		&& widx[i] != widx[j])

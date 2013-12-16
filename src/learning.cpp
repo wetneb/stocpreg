@@ -13,7 +13,7 @@ Lexicon LexiconLearner::run(vector<list<string> > &sentences, int nbIterations, 
 
     for(int i = 0; i < nbIterations; i++)
     {
-        /*
+        // /*
         if(i > 0)
             verbose = false;
         // */
@@ -66,6 +66,8 @@ Lexicon LexiconLearner::run(vector<list<string> > &sentences, int nbIterations, 
 
         // Normalizing
         counts.normalize();
+
+        cout << counts.toString();
 
         mLex = counts;
         
