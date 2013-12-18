@@ -184,6 +184,11 @@ ComplexType ComplexType::rightAdjoint() const
     return result;
 }
 
+bool ComplexType::isUnit() const
+{
+    return (size() == 1 && begin()->isUnit());
+}
+
 //! Defined only for data storage purposes
 bool ComplexType::operator<(const ComplexType &rhs) const
 {

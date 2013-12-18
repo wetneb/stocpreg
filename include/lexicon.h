@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <fstream>
+#include <cmath> // for lgamma
 
 #include <boost/serialization/map.hpp>
 #include <boost/serialization/string.hpp>
@@ -27,7 +28,7 @@ class LexiconEntry : public std::map<ComplexType, float>
         LexiconEntry(int nbBaseTypes, int maxLength, int maxOrder, bool atLeastOneProductive = true);
 
         void addCount(ComplexType t, float value);
-        void normalize();
+        void normalize(float dirichletPrior = 1.0);
         
         string toString() const;
         bool fromFile(const string &filename); // this does not use boost serialization
@@ -61,7 +62,7 @@ class Lexicon : public std::map<std::string, LexiconEntry>
         void save(string filename);
 
         //! Normalize the probabilities for each word
-        void normalize();
+        void normalize(float dirichletPrior = 1.0);
 
         //! Print it to a string
         string toString() const;

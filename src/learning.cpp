@@ -7,7 +7,7 @@ LexiconLearner::LexiconLearner(Lexicon &initLex) :
     ;
 }
 
-Lexicon LexiconLearner::run(vector<list<string> > &sentences, int nbIterations, bool verbose)
+Lexicon LexiconLearner::run(vector<list<string> > &sentences, int nbIterations, float dirichletPrior, bool verbose)
 {
     SimpleType targetType("s", 0);
 
@@ -65,7 +65,7 @@ Lexicon LexiconLearner::run(vector<list<string> > &sentences, int nbIterations, 
             cout << endl;
 
         // Normalizing
-        counts.normalize();
+        counts.normalize(dirichletPrior);
 
         cout << counts.toString();
 

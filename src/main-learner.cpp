@@ -15,14 +15,14 @@ int main(int argc, char** argv)
     SimpleType s("s", 0), n("n",0), nl("n",-1), nr("n",1), unit("1",0);
 
 
-	if(argc != 4 && argc != 5)
+	if(argc != 5 && argc != 6)
 	{
 	    cerr << "Usage:\n"
-		 << argv[0] << " [types] [sentences] [nb-iterations] (verbosity)\n"
+		 << argv[0] << " [types] [sentences] [nb-iterations] [dirichlet-prior] (verbosity)\n"
 		 << endl;
 	    return 1;
 	}
-    bool verbose = (argc == 5);
+    bool verbose = (argc == 6);
 
     vector<list<string> > sentences;
     ifstream sentFile(argv[2]);
@@ -35,6 +35,9 @@ int main(int argc, char** argv)
     int nbIterations = 1;
     istringstream arg2(argv[3]);
     arg2 >> nbIterations;
+    float dirichletPrior = 1.0;
+    istringstream arg3(argv[4]);
+    arg3 >> dirichletPrior;
 
     LexiconEntry defaultEntry;
     if(!defaultEntry.fromFile(argv[1]))
@@ -74,7 +77,7 @@ int main(int argc, char** argv)
     }
 
     LexiconLearner learner(lex);
-    Lexicon finalLex = learner.run(sentences, nbIterations, verbose);
+    Lexicon finalLex = learner.run(sentences, nbIterations, dirichletPrior, verbose);
 
     ofstream outLexicon("trained_lexicon");
     outLexicon << finalLex.toString() << endl;

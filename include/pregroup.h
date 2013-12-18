@@ -91,6 +91,8 @@ class ComplexType : public list<SimpleType>
         ComplexType leftAdjoint() const;
         ComplexType rightAdjoint() const;
 
+        bool isUnit() const;
+
         //! Defined only for data storage purposes
         bool operator<(const ComplexType &rhs) const;
 //        bool operator==(const ComplexType &rhs) const;

@@ -33,11 +33,11 @@ void Lexicon::save(string filename)
     }
 }
 
-void Lexicon::normalize()
+void Lexicon::normalize(float dirichletPrior)
 {
     for(Lexicon::iterator it = begin();
             it != end(); it++)
-        it->second.normalize();
+        it->second.normalize(dirichletPrior);
 }
 
 string Lexicon::toString() const
@@ -98,17 +98,30 @@ char LexiconEntry::nthBaseType(int n)
     return (n == 0 ? 's' : 'a' + (n-1));
 }
 
-void LexiconEntry::normalize()
+void LexiconEntry::normalize(float dirichletPrior)
 {
     float sum = 0;
+    bool unitExcluded = false;
     for(LexiconEntry::iterator it = begin();
             it != end(); it++)
-        sum += it->second;
+    {
+        if(it->first.isUnit())
+            it->second += dirichletPrior - 1;
+        if(it->second < 0)
+        {
+            it->second = 0;
+            unitExcluded = true;
+        }
+        else
+            sum += it->second;
+    }
+
     if(sum > 0)
     {
         for(LexiconEntry::iterator it = begin();
                 it != end(); it++)
-            it->second /= sum;
+            if(!(unitExcluded && it->first.isUnit()))
+                it->second /= sum;
     }
 }
 

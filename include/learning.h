@@ -16,7 +16,7 @@ class LexiconLearner
     public:
         LexiconLearner(Lexicon &initLex);
 
-        Lexicon run(vector<list<string> > &sentences, int nbIterations, bool verbose);        
+        Lexicon run(vector<list<string> > &sentences, int nbIterations, float dirichletPrior, bool verbose);        
 
     private:
         Lexicon mLex;
