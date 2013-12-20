@@ -3,7 +3,7 @@
 #define INCLUDED_LEARNING_H
 
 #include "lexicon.h"
-#include "parser.h"
+#include "pregroupparser.h"
 
 #include <vector>
 #include <list>

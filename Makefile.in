@@ -95,13 +95,13 @@ PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_learner_OBJECTS = src/frameelem.$(OBJEXT) src/framestring.$(OBJEXT) \
 	src/main-learner.$(OBJEXT) src/learning.$(OBJEXT) \
-	src/parser.$(OBJEXT) src/pregroup.$(OBJEXT) \
+	src/pregroupparser.$(OBJEXT) src/pregroup.$(OBJEXT) \
 	src/group.$(OBJEXT)
 learner_OBJECTS = $(am_learner_OBJECTS)
 am__DEPENDENCIES_1 =
 learner_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_parser_OBJECTS = src/frameelem.$(OBJEXT) src/framestring.$(OBJEXT) \
-	src/main-parser.$(OBJEXT) src/parser.$(OBJEXT) \
+	src/main-parser.$(OBJEXT) src/pregroupparser.$(OBJEXT) \
 	src/pregroup.$(OBJEXT) src/group.$(OBJEXT)
 parser_OBJECTS = $(am_parser_OBJECTS)
 parser_DEPENDENCIES = $(am__DEPENDENCIES_1)
@@ -278,9 +278,9 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -I$(top_srcdir)/include $(BOOST_CFLAGS)
-parser_SOURCES = include/frameelem.h include/framestring.h include/lexicon.h include/lexiconentry.h include/parser.h include/pregroup.h include/group.h src/frameelem.cpp src/framestring.cpp src/main-parser.cpp src/parser.cpp src/pregroup.cpp src/group.cpp 
+parser_SOURCES = include/frameelem.h include/framestring.h include/lexicon.h include/lexiconentry.h include/pregroupparser.h include/pregroup.h include/group.h src/frameelem.cpp src/framestring.cpp src/main-parser.cpp src/pregroupparser.cpp src/pregroup.cpp src/group.cpp 
 parser_LDADD = $(BOOST_LIBS)
-learner_SOURCES = include/frameelem.h include/framestring.h include/lexicon.h include/lexiconentry.h include/parser.h include/pregroup.h include/learning.h include/group.h src/frameelem.cpp src/framestring.cpp src/main-learner.cpp src/learning.cpp src/parser.cpp src/pregroup.cpp src/group.cpp
+learner_SOURCES = include/frameelem.h include/framestring.h include/lexicon.h include/lexiconentry.h include/pregroupparser.h include/pregroup.h include/learning.h include/group.h src/frameelem.cpp src/framestring.cpp src/main-learner.cpp src/learning.cpp src/pregroupparser.cpp src/pregroup.cpp src/group.cpp
 learner_LDADD = $(BOOST_LIBS)
 all: all-am
 
@@ -376,7 +376,7 @@ src/main-learner.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/learning.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
-src/parser.$(OBJEXT): src/$(am__dirstamp) \
+src/pregroupparser.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/pregroup.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
@@ -405,8 +405,8 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/learning.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/main-learner.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/main-parser.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/parser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/pregroup.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/pregroupparser.Po@am__quote@
 
 .cpp.o:
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)depbase=`echo $@ | sed 's|[^/]*$$|$(DEPDIR)/&|;s|\.o$$||'`;\

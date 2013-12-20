@@ -1,6 +1,6 @@
 
 #include "lexicon.h"
-#include "parser.h"
+#include "pregroupparser.h"
 #include "pregroup.h"
 
 #include <boost/archive/text_oarchive.hpp>
