@@ -1,14 +1,16 @@
 
 #include "lexicon.h"
 
-Lexicon::Lexicon(string filename)
+template<class T>
+Lexicon<T>::Lexicon(string filename)
 {
     if(filename.size())
         load(filename);
     // TODO raise exception on error
 }
 
-bool Lexicon::load(string filename)
+template<class T>
+bool Lexicon<T>::load(string filename)
 {
     // TODO catch exceptions
     std::ifstream file(filename.c_str());
@@ -22,7 +24,8 @@ bool Lexicon::load(string filename)
     return true;
 }
 
-void Lexicon::save(string filename)
+template<class T>
+void Lexicon<T>::save(string filename)
 {
     std::ofstream file(filename.c_str());
 
@@ -33,77 +36,45 @@ void Lexicon::save(string filename)
     }
 }
 
-void Lexicon::normalize(float dirichletPrior)
+template<class T>
+void Lexicon<T>::normalize(float dirichletPrior)
 {
-    for(Lexicon::iterator it = begin();
-            it != end(); it++)
+    for(typename Lexicon<T>::iterator it = this->begin();
+            it != this->end(); it++)
         it->second.normalize(dirichletPrior);
 }
 
-string Lexicon::toString() const
+template<class T>
+string Lexicon<T>::toString() const
 {
     ostringstream out;
 
-    for(Lexicon::const_iterator it = begin();
-            it != end(); it++)
+    for(typename Lexicon<T>::const_iterator it = this->begin();
+            it != this->end(); it++)
         out << it->first << "\n" << it->second.toString() << "\n";
 
     return out.str();
 }
 
-LexiconEntry::LexiconEntry()
+template<class T>
+LexiconEntry<T>::LexiconEntry()
 {
     ;
 }
 
-void LexiconEntry::genComplexType(ComplexType base, int remainingSimple, int nbBaseTypes, int maxOrder, bool productiveIncluded)
-{
-    if(remainingSimple == 0)
-    {
-        if(productiveIncluded)
-           (*this)[base] = 1.0;
-    }
-    else
-    {
-        for(int exp = -maxOrder; exp <= maxOrder; exp++)
-        {
-            for(int bt = 0; bt < nbBaseTypes; bt++)
-            {
-                ComplexType ct(base);
-                ct.push_back(SimpleType(string(1,nthBaseType(bt)),exp));
-                genComplexType(ct, remainingSimple-1, nbBaseTypes, maxOrder, productiveIncluded || (exp % 2 == 0));
-            }
-        }
-    }
-}
-
-//! Build a lexicon with lots of types in it, namely all the types made of
-// - at most maxLength simple types
-// - nbBaseTypes distinct base types
-// - order at most maxOrder
-// if atLeastOneProductive is set, then all the complex types contain at least
-// one productive type.
-LexiconEntry::LexiconEntry(int nbBaseTypes, int maxLength, int maxOrder, bool atLeastOneProductive)
-{
-    for(int length = 1; length <= maxLength; length++)
-    {
-        ComplexType ct;
-        genComplexType(ct, length, nbBaseTypes, maxOrder, !atLeastOneProductive);
-    }
-    normalize();
-}
-
-char LexiconEntry::nthBaseType(int n)
+template<class T>
+char LexiconEntry<T>::nthBaseType(int n)
 {
     return (n == 0 ? 's' : 'a' + (n-1));
 }
 
-void LexiconEntry::normalize(float dirichletPrior)
+template<class T>
+void LexiconEntry<T>::normalize(float dirichletPrior)
 {
     float sum = 0;
     bool unitExcluded = false;
-    for(LexiconEntry::iterator it = begin();
-            it != end(); it++)
+    for(typename LexiconEntry<T>::iterator it = this->begin();
+            it != this->end(); it++)
     {
         if(it->first.isUnit())
             it->second += dirichletPrior - 1;
@@ -118,16 +89,17 @@ void LexiconEntry::normalize(float dirichletPrior)
 
     if(sum > 0)
     {
-        for(LexiconEntry::iterator it = begin();
-                it != end(); it++)
+        for(typename LexiconEntry<T>::iterator it = this->begin();
+                it != this->end(); it++)
             if(!(unitExcluded && it->first.isUnit()))
                 it->second /= sum;
     }
 }
 
-void LexiconEntry::addCount(ComplexType t, float value)
+template<class T>
+void LexiconEntry<T>::addCount(T t, float value)
 {
-    if(find(t) != end())
+    if(this->find(t) != this->end())
     {
         float oldval = (*this)[t];
         erase(t);
@@ -137,18 +109,20 @@ void LexiconEntry::addCount(ComplexType t, float value)
         (*this)[t] = value;
 }
 
-string LexiconEntry::toString() const
+template<class T>
+string LexiconEntry<T>::toString() const
 {
     ostringstream out;
 
-    for(LexiconEntry::const_iterator it = begin();
-            it != end(); it++)
+    for(typename LexiconEntry<T>::const_iterator it = this->begin();
+            it != this->end(); it++)
         out << it->first.toString() << " : " << it->second << "\n";
 
     return out.str();
 }
 
-bool LexiconEntry::fromFile(const string &filename)
+template<class T>
+bool LexiconEntry<T>::fromFile(const string &filename)
 { // this does not use boost serialization
     ifstream fs(filename.c_str());
     if(!fs.good())

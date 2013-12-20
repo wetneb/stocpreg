@@ -96,14 +96,13 @@ am__dirstamp = $(am__leading_dot)dirstamp
 am_learner_OBJECTS = src/frameelem.$(OBJEXT) src/framestring.$(OBJEXT) \
 	src/main-learner.$(OBJEXT) src/learning.$(OBJEXT) \
 	src/parser.$(OBJEXT) src/pregroup.$(OBJEXT) \
-	src/lexicon.$(OBJEXT) src/group.$(OBJEXT)
+	src/group.$(OBJEXT)
 learner_OBJECTS = $(am_learner_OBJECTS)
 am__DEPENDENCIES_1 =
 learner_DEPENDENCIES = $(am__DEPENDENCIES_1)
 am_parser_OBJECTS = src/frameelem.$(OBJEXT) src/framestring.$(OBJEXT) \
 	src/main-parser.$(OBJEXT) src/parser.$(OBJEXT) \
-	src/pregroup.$(OBJEXT) src/lexicon.$(OBJEXT) \
-	src/group.$(OBJEXT)
+	src/pregroup.$(OBJEXT) src/group.$(OBJEXT)
 parser_OBJECTS = $(am_parser_OBJECTS)
 parser_DEPENDENCIES = $(am__DEPENDENCIES_1)
 AM_V_P = $(am__v_P_@AM_V@)
@@ -279,9 +278,9 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AM_CPPFLAGS = -I$(top_srcdir)/include $(BOOST_CFLAGS)
-parser_SOURCES = include/frameelem.h include/framestring.h include/lexicon.h include/parser.h include/pregroup.h include/group.h src/frameelem.cpp src/framestring.cpp src/main-parser.cpp src/parser.cpp src/pregroup.cpp src/lexicon.cpp src/group.cpp 
+parser_SOURCES = include/frameelem.h include/framestring.h include/lexicon.h include/lexiconentry.h include/parser.h include/pregroup.h include/group.h src/frameelem.cpp src/framestring.cpp src/main-parser.cpp src/parser.cpp src/pregroup.cpp src/group.cpp 
 parser_LDADD = $(BOOST_LIBS)
-learner_SOURCES = include/frameelem.h include/framestring.h include/lexicon.h include/parser.h include/pregroup.h include/learning.h include/group.h src/frameelem.cpp src/framestring.cpp src/main-learner.cpp src/learning.cpp src/parser.cpp src/pregroup.cpp src/lexicon.cpp src/group.cpp
+learner_SOURCES = include/frameelem.h include/framestring.h include/lexicon.h include/lexiconentry.h include/parser.h include/pregroup.h include/learning.h include/group.h src/frameelem.cpp src/framestring.cpp src/main-learner.cpp src/learning.cpp src/parser.cpp src/pregroup.cpp src/group.cpp
 learner_LDADD = $(BOOST_LIBS)
 all: all-am
 
@@ -381,8 +380,6 @@ src/parser.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/pregroup.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
-src/lexicon.$(OBJEXT): src/$(am__dirstamp) \
-	src/$(DEPDIR)/$(am__dirstamp)
 src/group.$(OBJEXT): src/$(am__dirstamp) src/$(DEPDIR)/$(am__dirstamp)
 
 learner$(EXEEXT): $(learner_OBJECTS) $(learner_DEPENDENCIES) $(EXTRA_learner_DEPENDENCIES) 
@@ -406,7 +403,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/framestring.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/group.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/learning.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/lexicon.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/main-learner.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/main-parser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/parser.Po@am__quote@

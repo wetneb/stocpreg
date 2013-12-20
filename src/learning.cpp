@@ -1,13 +1,13 @@
 
 #include "learning.h"
 
-LexiconLearner::LexiconLearner(Lexicon &initLex) :
+LexiconLearner::LexiconLearner(Lexicon<ComplexType> &initLex) :
     mLex(initLex)
 {
     ;
 }
 
-Lexicon LexiconLearner::run(vector<list<string> > &sentences, int nbIterations, float dirichletPrior, bool verbose)
+Lexicon<ComplexType> LexiconLearner::run(vector<list<string> > &sentences, int nbIterations, float dirichletPrior, bool verbose)
 {
     SimpleType targetType("s", 0);
 
@@ -18,7 +18,7 @@ Lexicon LexiconLearner::run(vector<list<string> > &sentences, int nbIterations, 
             verbose = false;
         // */
 
-        Lexicon counts;
+        Lexicon<ComplexType> counts;
 
         cout << "ITERATION "<<i+1<<endl;
         float logLikelihood = 0;

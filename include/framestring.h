@@ -26,7 +26,7 @@ class FrameString : public vector<FrameElem*>
     ~FrameString();
 
 	//! Construct from a list of words, a lexicon and a target type
-	FrameString(Lexicon lex, list<string> words, ComplexType target);	
+	FrameString(Lexicon<ComplexType> lex, list<string> words, ComplexType target);	
 
 	string toString();
 	string toString(int i, int j);

@@ -39,7 +39,7 @@ int main(int argc, char** argv)
     istringstream arg3(argv[4]);
     arg3 >> dirichletPrior;
 
-    LexiconEntry defaultEntry;
+    LexiconEntry<ComplexType> defaultEntry;
     if(!defaultEntry.fromFile(argv[1]))
     {
         cerr << "Error while reading the file \""<<argv[1]<<"\""<<endl;
@@ -52,7 +52,7 @@ int main(int argc, char** argv)
             <<defaultEntry.toString()<<endl;
     }
 
-    Lexicon lex;
+    Lexicon<ComplexType> lex;
 
 	while(sentFile.good())
 	{
@@ -77,7 +77,7 @@ int main(int argc, char** argv)
     }
 
     LexiconLearner learner(lex);
-    Lexicon finalLex = learner.run(sentences, nbIterations, dirichletPrior, verbose);
+    Lexicon<ComplexType> finalLex = learner.run(sentences, nbIterations, dirichletPrior, verbose);
 
     ofstream outLexicon("trained_lexicon");
     outLexicon << finalLex.toString() << endl;

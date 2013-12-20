@@ -12,66 +12,75 @@
 #include <boost/archive/text_oarchive.hpp>
 
 #include "pregroup.h"
+#include "lexiconentry.h"
 
-class LexiconEntry : public std::map<ComplexType, float>
-{
-    friend class boost::serialization::access;
-    public:
-        LexiconEntry();
-
-        //! Build a lexicon with lots of types in it, namely all the types made of
-        // - at most maxLength simple types
-        // - nbBaseTypes distinct base types
-        // - order at most maxOrder
-        // if atLeastOneProductive is set, then all the complex types contain at least
-        // one productive type.
-        LexiconEntry(int nbBaseTypes, int maxLength, int maxOrder, bool atLeastOneProductive = true);
-
-        void addCount(ComplexType t, float value);
-        void normalize(float dirichletPrior = 1.0);
-        
-        string toString() const;
-        bool fromFile(const string &filename); // this does not use boost serialization
-
-    private:
-        //! returns 's', 'a', 'b', 'c', …
-        char nthBaseType(int n);
-        //! recursive subroutine used to generate large lexicons
-        void genComplexType(ComplexType base, int remainingSimple, int nbBaseTypes, int maxOrder, bool productiveIncluded);
-
-        template<class Archive>
-        void serialize(Archive &ar, const unsigned int version)
-        {
-            std::map<ComplexType, float>* ptr = this;
-            ar & *ptr;
-        }
-};
-
-class Lexicon : public std::map<std::string, LexiconEntry>
+template<class T>
+class Lexicon : public std::map<std::string, LexiconEntry<T> >
 {
     friend class boost::serialization::access;
 
     public:
         //! Load a lexicon from a file, or an empty one if no path provided
-        Lexicon(string filename = "");	
+        Lexicon(string filename = "")	
+        {
+            if(filename.size())
+                load(filename);
+            // TODO raise exception on error
+        }
 
         //! Load a lexicon from a file
-        bool load(string filename);
+        bool load(string filename)
+        {
+            // TODO catch exceptions
+            std::ifstream file(filename.c_str());
+
+            {
+                boost::archive::text_iarchive ar(file);
+
+                ar >> *this;
+            }
+
+            return true;
+        }
+
 
         //! Save it to a file
-        void save(string filename);
+        void save(string filename)
+        {
+            std::ofstream file(filename.c_str());
+
+            {
+                boost::archive::text_oarchive ar(file);
+
+                ar << *this;
+            }
+        }
 
         //! Normalize the probabilities for each word
-        void normalize(float dirichletPrior = 1.0);
+        void normalize(float dirichletPrior = 1.0)
+        {
+            for(typename Lexicon<T>::iterator it = this->begin();
+                    it != this->end(); it++)
+                it->second.normalize(dirichletPrior);
+        }
 
         //! Print it to a string
-        string toString() const;
+        string toString() const
+        {
+            ostringstream out;
+
+            for(typename Lexicon<T>::const_iterator it = this->begin();
+                    it != this->end(); it++)
+                out << it->first << "\n" << it->second.toString() << "\n";
+
+            return out.str();
+        }
 
     private:
         template<class Archive>
         void serialize(Archive &ar, const unsigned int version)
         {
-            std::map<std::string, LexiconEntry>* ptr = this;
+            std::map<std::string, LexiconEntry<T> >* ptr = this;
             ar & *ptr;
         }
 

@@ -14,12 +14,12 @@ using namespace std;
 class LexiconLearner
 {
     public:
-        LexiconLearner(Lexicon &initLex);
+        LexiconLearner(Lexicon<ComplexType> &initLex);
 
-        Lexicon run(vector<list<string> > &sentences, int nbIterations, float dirichletPrior, bool verbose);        
+        Lexicon<ComplexType> run(vector<list<string> > &sentences, int nbIterations, float dirichletPrior, bool verbose);        
 
     private:
-        Lexicon mLex;
+        Lexicon<ComplexType> mLex;
 
 };
 

@@ -16,9 +16,9 @@ int main(int argc, char** argv)
     ComplexType sn(s);
     sn.push_back(n);
 
-    LexiconEntry lex1;
+    LexiconEntry<ComplexType> lex1;
     lex1[sn] = 0.7;
-    Lexicon lex2;
+    Lexicon<ComplexType> lex2;
     lex2["Alice"] = lex1;
 
 /*
@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 	}
 */
 
-	Lexicon lex; //(argv[1])
+	Lexicon<ComplexType> lex; //(argv[1])
 
     ComplexType nsn(nr);
     nsn.push_back(s);
@@ -46,7 +46,7 @@ int main(int argc, char** argv)
     words.push_back("bothers");
     words.push_back("walks");
 
-    LexiconEntry entry;
+    LexiconEntry<ComplexType> entry;
     entry[n] = 1.0 / 3;
     entry[nsn] = 1.0 / 3;
     entry[ns] = 1.0 / 3;

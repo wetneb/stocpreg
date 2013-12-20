@@ -45,7 +45,7 @@ FrameString::~FrameString()
 }
 
 //! Construct from a list of words, a lexicon and a target type
-FrameString::FrameString(Lexicon lex, list<string> words, ComplexType target)
+FrameString::FrameString(Lexicon<ComplexType> lex, list<string> words, ComplexType target)
 {
 	for(list<string>::iterator word = words.begin();
 		word != words.end(); word++)
@@ -55,8 +55,8 @@ FrameString::FrameString(Lexicon lex, list<string> words, ComplexType target)
 		
 		if(lex.count(*word))
 		{
-			LexiconEntry entry = lex.find(*word)->second;
-			for(LexiconEntry::iterator it = entry.begin();
+			LexiconEntry<ComplexType> entry = lex.find(*word)->second;
+			for(LexiconEntry<ComplexType>::iterator it = entry.begin();
 				it != entry.end(); it++)
 			{
 				addType(it->first, it->second);
