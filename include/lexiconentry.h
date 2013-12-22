@@ -74,7 +74,7 @@ class LexiconEntry : public std::map<T, float>
             return out.str();
         }
 
-        bool fromFile(const string &filename) // this does not use boost serialization
+        bool fromFile(const string &filename) 
         { // this does not use boost serialization
             ifstream fs(filename.c_str());
             if(!fs.good())

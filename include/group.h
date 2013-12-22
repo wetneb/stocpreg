@@ -1,6 +1,6 @@
 
-#ifndef INCLUDED_PREGROUP_H
-#define INCLUDED_PREGROUP_H
+#ifndef INCLUDED_GROUP_H
+#define INCLUDED_GROUP_H
 
 #include <string>
 #include <utility>
