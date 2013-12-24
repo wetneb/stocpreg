@@ -6,11 +6,10 @@ AbelianType PrgGrpMorphism::translate(const ComplexType &t)
     for(ComplexType::const_iterator it = t.begin();
             it != t.end(); it++)
     {
-        int currentVal = res[it->baseType];
         if(it->exponent % 2 == 0)
-            res[it->baseType] = currentVal + 1;
+            res *= AbelianType(it->baseType,1);
         else
-            res[it->baseType] = currentVal - 1;
+            res *= AbelianType(it->baseType,-1);
     }
     return res;
 }
@@ -21,7 +20,7 @@ LexiconEntry<AbelianType> PrgGrpMorphism::translate(const LexiconEntry<ComplexTy
     for(LexiconEntry<ComplexType>::const_iterator it = entry.begin();
             it != entry.end(); it++)
     {
-        res[PrgGrpMorphism::translate(it->first)] = it->second;
+        res[PrgGrpMorphism::translate(it->first)] += it->second;
     }
     return res;
 }

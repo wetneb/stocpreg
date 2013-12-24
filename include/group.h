@@ -53,6 +53,7 @@ class AbelianType : public map<string, int>
         bool isUnit() const;
 
         AbelianType operator*(const AbelianType &rhs) const;
+        AbelianType operator*=(const AbelianType &rhs);
 
         //! Defined only for data storage purposes
         bool operator<(const AbelianType &rhs) const;

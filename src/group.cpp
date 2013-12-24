@@ -54,11 +54,15 @@ AbelianType::AbelianType()
 
 AbelianType::AbelianType(string baseType, int exponent)
 {
-    (*this)[baseType] = exponent;
+    if(baseType != "1" && exponent != 0)
+        (*this)[baseType] = exponent;
 }
 
 string AbelianType::toString() const
 {
+    if(isUnit())
+        return string("1");
+
     ostringstream out;
 
     for(AbelianType::const_iterator it = begin(); it != end(); it++)
@@ -84,12 +88,23 @@ bool AbelianType::isUnit() const
 // Group operation
 AbelianType AbelianType::operator*(const AbelianType &rhs) const
 {
-    AbelianType res(rhs);
-    for(AbelianType::const_iterator it = begin();
-            it != end(); it++)
-        res[it->first] += it->second;
-
+    AbelianType res(*this);
+    res *= rhs;
     return res;
+}
+
+AbelianType AbelianType::operator*=(const AbelianType &rhs)
+{
+    for(AbelianType::const_iterator it = rhs.begin();
+            it != rhs.end(); it++)
+    {
+        int newExp = (*this)[it->first] + it->second;
+        if(newExp)
+            (*this)[it->first] += newExp;
+        else
+            this->erase(it->first);
+    }
+    return (*this);
 }
 
 //! Defined only for data storage purposes
