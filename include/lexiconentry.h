@@ -108,7 +108,7 @@ class LexiconEntry : public std::map<T, float>
         template<class Archive>
         void serialize(Archive &ar, const unsigned int version)
         {
-            std::map<ComplexType, float>* ptr = this;
+            std::map<T, float>* ptr = this;
             ar & *ptr;
         }
 };
