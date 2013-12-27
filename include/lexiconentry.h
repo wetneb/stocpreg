@@ -11,6 +11,8 @@
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
 
+#define LEXICONENTRY_EPSILON 0.000001
+
 #include "pregroup.h"
 
 template<class T>
@@ -60,6 +62,25 @@ class LexiconEntry : public std::map<T, float>
                         it != this->end(); it++)
                     if(!(unitExcluded && it->first.isUnit()))
                         it->second /= sum;
+            }
+        }
+
+        // Remove entries with probability zero
+        void pruneZeros()
+        {
+            for(typename LexiconEntry<T>::iterator it = this->begin();
+                    it != this->end(); )
+            {
+                if(it->second < LEXICONENTRY_EPSILON)
+                {
+                    typename LexiconEntry<T>::iterator i = it;
+                    ++i;
+                    this->erase(it);
+                    it = i;
+                }
+                else
+                    ++it;
+
             }
         }
         

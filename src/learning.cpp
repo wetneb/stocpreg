@@ -66,6 +66,8 @@ Lexicon<ComplexType> LexiconLearner::run(vector<list<string> > &sentences, int n
 
         // Normalizing
         counts.normalize(dirichletPrior);
+        // Pruning
+        counts.pruneZeros();
 
         cout << counts.toString();
 

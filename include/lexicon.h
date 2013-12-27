@@ -64,6 +64,14 @@ class Lexicon : public std::map<std::string, LexiconEntry<T> >
                 it->second.normalize(dirichletPrior);
         }
 
+        //! Remove the type assignments with probability zero
+        void pruneZeros()
+        {
+            for(typename Lexicon<T>::iterator it = this->begin();
+                    it != this->end(); it++)
+                it->second.pruneZeros();
+        }
+
         //! Print it to a string
         string toString() const
         {
