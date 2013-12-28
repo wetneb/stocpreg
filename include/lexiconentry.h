@@ -105,7 +105,7 @@ class LexiconEntry : public std::map<T, float>
             {
                 string line;
                 getline(fs, line);
-                if(line.size())
+                if(line.size() && line[0] != '#') // do not parse comments
                 {
                     ComplexType ct;
                     if(!ct.fromString(line))
