@@ -28,6 +28,11 @@ CCGCat* CCGCat::parse(string str)
     else throw CCGTypeError("Trailing characters at the end of the type: \""+str.substr(res.second)+"\"");
 }
 
+bool admissibleCharForType(char c)
+{
+    return isupper(c) || c == ',' || c == '.';
+}
+
 pair<CCGCat*,int> CCGCat::parseLeast(string &str, int start)
 {
     pair<CCGCat*,int> firstRes;
@@ -38,10 +43,10 @@ pair<CCGCat*,int> CCGCat::parseLeast(string &str, int start)
             throw CCGTypeError("Unmatched parenthesis: \""+str.substr(start,firstRes.second+1-start)+"\"");
         firstRes.second++;
     }
-    else if(isupper(str[start]))
+    else if(admissibleCharForType(str[start]))
     {
         int idx = start+1;
-        while(idx < str.size() && isalpha(str[idx]) && isupper(str[idx]))
+        while(idx < str.size() && admissibleCharForType(str[idx]))
             idx++;
 
         string baseType = str.substr(start,idx - start);
@@ -55,7 +60,7 @@ pair<CCGCat*,int> CCGCat::parseLeast(string &str, int start)
             if(idx < str.size() && str[idx] != ']')
                 throw CCGTypeError("Unmatched [ : \""+str.substr(start,idx+1-start)+"\"");
 
-            annotation = str.substr(annotationBegin,idx-1);
+            annotation = str.substr(annotationBegin,idx-annotationBegin);
             idx++;
         }
 
