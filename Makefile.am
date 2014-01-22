@@ -11,6 +11,6 @@ learner_LDADD = $(BOOST_LIBS)
 morphism_SOURCES = include/lexicon.h include/lexiconentry.h include/pregroup.h include/group.h include/morphism.h include/grouppregroup.h src/pregroup.cpp src/group.cpp src/grouppregroup.cpp src/main-morphism.cpp
 morphism_LDADD = $(BOOST_LIBS)
 
-ccgbank_SOURCES = include/ccg.h src/ccg.cpp src/main-ccgbank.cpp include/morphism.h
+ccgbank_SOURCES = include/ccg.h src/ccg.cpp src/main-ccgbank.cpp include/morphism.h include/pregroup.h src/pregroup.cpp
 ccgbank_LDADD = 
 

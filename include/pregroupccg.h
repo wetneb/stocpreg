@@ -5,8 +5,37 @@
 #include "pregroup.h"
 #include "lexiconentry.h"
 #include "lexicon.h"
+#include "morphism.h"
 
-template<>
-ComplexType PrgGrpMorphism::translateType<CCGCat*,ComplexType>(const CCGCat* &t);
+template<typename T>
+class GrammarMorphism<T*,ComplexType>
+{
+    public:
+    static ComplexType translateType(const T* &t)
+    {
+        ComplexType res;
+        if(t->isLabel())
+            res.push_back(t->toString());
+        else
+        {
+            CCGQuotient* quo = (CCGQuotient*)t;
+            ComplexType body = translateType(quo->num);
+            ComplexType arg = translateType(quo->denom);
+            if(quo->right)
+            {
+                const ComplexType &argl = arg.leftAdjoint();
+                res = body * argl;
+            }
+            else
+            {
+                const ComplexType &argr = arg.rightAdjoint();
+                res = argr * body;
+            }
+        }
+        return res;
+    }
+
+
+};
 
 #endif

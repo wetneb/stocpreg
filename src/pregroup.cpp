@@ -184,6 +184,15 @@ ComplexType ComplexType::rightAdjoint() const
     return result;
 }
 
+ComplexType ComplexType::operator*(const ComplexType& rhs) const
+{
+    ComplexType res(*this);
+    ComplexType new_rhs(rhs);
+    list<SimpleType>* right = (list<SimpleType>*)&new_rhs;
+    res.splice(res.end(), *right);
+    return res;
+}
+
 bool ComplexType::isUnit() const
 {
     return (size() == 1 && begin()->isUnit());

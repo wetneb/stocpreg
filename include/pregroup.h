@@ -93,6 +93,8 @@ class ComplexType : public list<SimpleType>
 
         bool isUnit() const;
 
+        ComplexType operator*(const ComplexType& rhs) const;
+
         //! Defined only for data storage purposes
         bool operator<(const ComplexType &rhs) const;
 //        bool operator==(const ComplexType &rhs) const;

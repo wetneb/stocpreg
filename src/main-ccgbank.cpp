@@ -5,6 +5,7 @@
 #include <string>
 
 #include "ccg.h"
+#include "pregroupccg.h"
 
 using namespace std;
 
@@ -48,7 +49,9 @@ int main(int argc, char** argv)
     for(vector<pair<string, CCGCat*> >::iterator it = assignments.begin();
             it != assignments.end(); ++it)
     {
-        cout << it->first << " : " << it->second->toString() << endl;
+        const CCGCat* category = it->second;
+        ComplexType translated = GrammarMorphism<CCGCat*,ComplexType>::translateType(category);
+        cout << it->first << " : " << it->second->toString() << " : " << translated.toString() << endl;
         delete it->second;
     }
 

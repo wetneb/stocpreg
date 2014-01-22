@@ -94,7 +94,8 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
-am_ccgbank_OBJECTS = src/ccg.$(OBJEXT) src/main-ccgbank.$(OBJEXT)
+am_ccgbank_OBJECTS = src/ccg.$(OBJEXT) src/main-ccgbank.$(OBJEXT) \
+	src/pregroup.$(OBJEXT)
 ccgbank_OBJECTS = $(am_ccgbank_OBJECTS)
 ccgbank_DEPENDENCIES =
 am_learner_OBJECTS = src/frameelem.$(OBJEXT) src/framestring.$(OBJEXT) \
@@ -296,7 +297,7 @@ learner_SOURCES = include/frameelem.h include/framestring.h include/lexicon.h in
 learner_LDADD = $(BOOST_LIBS)
 morphism_SOURCES = include/lexicon.h include/lexiconentry.h include/pregroup.h include/group.h include/morphism.h include/grouppregroup.h src/pregroup.cpp src/group.cpp src/grouppregroup.cpp src/main-morphism.cpp
 morphism_LDADD = $(BOOST_LIBS)
-ccgbank_SOURCES = include/ccg.h src/ccg.cpp src/main-ccgbank.cpp include/morphism.h
+ccgbank_SOURCES = include/ccg.h src/ccg.cpp src/main-ccgbank.cpp include/morphism.h include/pregroup.h src/pregroup.cpp
 ccgbank_LDADD = 
 all: all-am
 
@@ -387,6 +388,8 @@ src/$(DEPDIR)/$(am__dirstamp):
 src/ccg.$(OBJEXT): src/$(am__dirstamp) src/$(DEPDIR)/$(am__dirstamp)
 src/main-ccgbank.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
+src/pregroup.$(OBJEXT): src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
 
 ccgbank$(EXEEXT): $(ccgbank_OBJECTS) $(ccgbank_DEPENDENCIES) $(EXTRA_ccgbank_DEPENDENCIES) 
 	@rm -f ccgbank$(EXEEXT)
@@ -400,8 +403,6 @@ src/main-learner.$(OBJEXT): src/$(am__dirstamp) \
 src/learning.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/pregroupparser.$(OBJEXT): src/$(am__dirstamp) \
-	src/$(DEPDIR)/$(am__dirstamp)
-src/pregroup.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/group.$(OBJEXT): src/$(am__dirstamp) src/$(DEPDIR)/$(am__dirstamp)
 src/groupparser.$(OBJEXT): src/$(am__dirstamp) \

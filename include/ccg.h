@@ -85,9 +85,9 @@ class CCGQuotient : public CCGCat
         CCGQuotient(CCGCat* num, CCGCat* denom, bool right);
         ~CCGQuotient();
 
-        CCGCat* num;
-        CCGCat* denom;
-        bool right;
+        const CCGCat* num;
+        const CCGCat* denom;
+        const bool right;
 
         string toString() const;
         bool isQuotient() const;

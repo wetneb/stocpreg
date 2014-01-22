@@ -7,8 +7,25 @@
 #include "lexicon.h"
 #include "morphism.h"
 
-//! Image of a complex type under the canonical forgetful morphism
+
 template<>
-AbelianType translateType<ComplexType,AbelianType>(const ComplexType &t);
+class GrammarMorphism<ComplexType,AbelianType>
+{
+    public:
+    //! Image of a complex type under the canonical forgetful morphism
+    static AbelianType translateType(const ComplexType &t)
+    {
+        AbelianType res;
+        for(ComplexType::const_iterator it = t.begin();
+                it != t.end(); it++)
+        {
+            if(it->exponent % 2 == 0)
+                res *= AbelianType(it->baseType,1);
+            else
+                res *= AbelianType(it->baseType,-1);
+        }
+        return res;
+    }
+};
 
 #endif
