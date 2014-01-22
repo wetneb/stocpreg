@@ -76,7 +76,8 @@ POST_INSTALL = :
 NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
-bin_PROGRAMS = parser$(EXEEXT) learner$(EXEEXT) morphism$(EXEEXT)
+bin_PROGRAMS = parser$(EXEEXT) learner$(EXEEXT) morphism$(EXEEXT) \
+	ccgbank$(EXEEXT)
 subdir = .
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/configure $(am__configure_deps) depcomp \
@@ -93,6 +94,9 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
+am_ccgbank_OBJECTS = src/ccg.$(OBJEXT) src/main-ccgbank.$(OBJEXT)
+ccgbank_OBJECTS = $(am_ccgbank_OBJECTS)
+ccgbank_DEPENDENCIES =
 am_learner_OBJECTS = src/frameelem.$(OBJEXT) src/framestring.$(OBJEXT) \
 	src/main-learner.$(OBJEXT) src/learning.$(OBJEXT) \
 	src/pregroupparser.$(OBJEXT) src/pregroup.$(OBJEXT) \
@@ -152,9 +156,10 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
-SOURCES = $(learner_SOURCES) $(morphism_SOURCES) $(parser_SOURCES)
-DIST_SOURCES = $(learner_SOURCES) $(morphism_SOURCES) \
+SOURCES = $(ccgbank_SOURCES) $(learner_SOURCES) $(morphism_SOURCES) \
 	$(parser_SOURCES)
+DIST_SOURCES = $(ccgbank_SOURCES) $(learner_SOURCES) \
+	$(morphism_SOURCES) $(parser_SOURCES)
 am__can_run_installinfo = \
   case $$AM_UPDATE_INFO_DIR in \
     n|no|NO) false;; \
@@ -291,6 +296,8 @@ learner_SOURCES = include/frameelem.h include/framestring.h include/lexicon.h in
 learner_LDADD = $(BOOST_LIBS)
 morphism_SOURCES = include/lexicon.h include/lexiconentry.h include/pregroup.h include/group.h include/grouppregroup.h src/pregroup.cpp src/group.cpp src/grouppregroup.cpp src/main-morphism.cpp
 morphism_LDADD = $(BOOST_LIBS)
+ccgbank_SOURCES = include/ccg.h src/ccg.cpp src/main-ccgbank.cpp
+ccgbank_LDADD = 
 all: all-am
 
 .SUFFIXES:
@@ -377,6 +384,13 @@ src/$(am__dirstamp):
 src/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) src/$(DEPDIR)
 	@: > src/$(DEPDIR)/$(am__dirstamp)
+src/ccg.$(OBJEXT): src/$(am__dirstamp) src/$(DEPDIR)/$(am__dirstamp)
+src/main-ccgbank.$(OBJEXT): src/$(am__dirstamp) \
+	src/$(DEPDIR)/$(am__dirstamp)
+
+ccgbank$(EXEEXT): $(ccgbank_OBJECTS) $(ccgbank_DEPENDENCIES) $(EXTRA_ccgbank_DEPENDENCIES) 
+	@rm -f ccgbank$(EXEEXT)
+	$(AM_V_CXXLD)$(CXXLINK) $(ccgbank_OBJECTS) $(ccgbank_LDADD) $(LIBS)
 src/frameelem.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/framestring.$(OBJEXT): src/$(am__dirstamp) \
@@ -418,12 +432,14 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/ccg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/frameelem.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/framestring.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/group.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/groupparser.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/grouppregroup.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/learning.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/main-ccgbank.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/main-learner.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/main-morphism.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@src/$(DEPDIR)/main-parser.Po@am__quote@

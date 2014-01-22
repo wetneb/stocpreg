@@ -7,65 +7,73 @@ CCGTypeError::CCGTypeError(string what) : mWhat(what)
 
 }
 
-const char* CCGTypeError::what()
+CCGTypeError::~CCGTypeError() throw ()
+{
+
+}
+
+const char* CCGTypeError::what() const throw ()
 {
     return mWhat.c_str();
 }
 
-static CCGCat CCGCat::parse(string str)
+CCGCat* CCGCat::parse(string str)
 {
     if(str.size() == 0)
         throw CCGTypeError("Unable to parse the empty string");
 
-    pair<CCGCat,int> res = parseLeast(str,0);
+    pair<CCGCat*,int> res = parseLeast(str,0);
     if(res.second == str.size())
         return res.first;
     else throw CCGTypeError("Trailing characters at the end of the type: \""+str.substr(res.second)+"\"");
 }
 
-static pair<CCGCat,int> CCGCat::parseLeast(string &str, int start)
+pair<CCGCat*,int> CCGCat::parseLeast(string &str, int start)
 {
+    pair<CCGCat*,int> firstRes;
     if(str[start] == '(')
     {
-        pair<CCGCat,int> res = parseLeast(str,start+1);
-        if(str[res.second] != ')')
-            throw CCGTypeError("Unmatched parenthesis: \""+str.substr(start,res.second+1-start)+"\"");
-        res.second++;
-        return res;
+        firstRes = parseLeast(str,start+1);
+        if(str[firstRes.second] != ')')
+            throw CCGTypeError("Unmatched parenthesis: \""+str.substr(start,firstRes.second+1-start)+"\"");
+        firstRes.second++;
     }
     else if(isupper(str[start]))
     {
         int idx = start+1;
-        while(isupper(str[idx]))
+        while(idx < str.size() && isalpha(str[idx]) && isupper(str[idx]))
             idx++;
 
-        string baseType = str.substr(start,idx-1);
+        string baseType = str.substr(start,idx - start);
         string annotation = "";
 
-        if(str[idx] == '[')
+        if(idx < str.size() && str[idx] == '[')
         {
             int annotationBegin = ++idx;
-            while(islower(str[idx]))
+            while(islower(str[idx]) && isalpha(str[idx]))
                 idx++;
-            if(str[idx] != ']')
+            if(idx < str.size() && str[idx] != ']')
                 throw CCGTypeError("Unmatched [ : \""+str.substr(start,idx+1-start)+"\"");
 
             annotation = str.substr(annotationBegin,idx-1);
             idx++;
         }
 
-        CCGCat firstCat(baseType,annotation);
-        if(str[idx] == '/' || str[idx] == '\\')
-        {
-            bool right = (str[idx] == '/');
-            
-            pair<CCGCat,int> res = parseLeast(str,idx+1);
-
-            return make_pair(CCGQuotient(firstCat,res.first),res.second);
-        }
-        else
-            return make_pair(firstCat,idx);
+        CCGLabel* firstCat = new CCGLabel(baseType,annotation);
+        firstRes = make_pair(firstCat,idx);
     }
+
+    int idx = firstRes.second;
+    if(idx < str.size() && (str[idx] == '/' || str[idx] == '\\'))
+    {
+        bool right = (str[idx] == '/');
+        
+        pair<CCGCat*,int> res = parseLeast(str,idx+1);
+
+        return make_pair(new CCGQuotient(firstRes.first,res.first, right),res.second);
+    }
+    else
+        return firstRes;
 }
 
 CCGLabel::CCGLabel(string mainType, string annotation) :
@@ -75,7 +83,7 @@ CCGLabel::CCGLabel(string mainType, string annotation) :
 
 }
 
-string CCGLabel::toString()
+string CCGLabel::toString() const
 {
     if(annotation == "")
         return mainType;
@@ -83,21 +91,21 @@ string CCGLabel::toString()
         return (mainType + "["+annotation+"]");
 }
 
-CCGQuotient::CCGQuotient(CCGCat &num, CCGCat &denom, bool right)
-    num(num),
-    denom(denom),
-    right(right)
+CCGQuotient::CCGQuotient(CCGCat* n, CCGCat* d, bool r) :
+    num(n),
+    denom(d),
+    right(r)
 {
 
 }
 
-string CCGQuotient::toString()
+string CCGQuotient::toString() const
 {
-    string first = num.toString(), second = denom.toString();
-    if(num.isQuotient())
+    string first = num->toString(), second = denom->toString();
+    if(num->isQuotient())
         first = "(" + first + ")";
-    if(denom.isQuotient())
-        second = "(" + denom + ")";
+    if(denom->isQuotient())
+        second = "(" + second + ")";
 
     if(right)
         return (first + "/" + second);
@@ -105,23 +113,29 @@ string CCGQuotient::toString()
         return (first + "\\" + second);
 }
 
-bool CCGLabel::isLabel()
+bool CCGLabel::isLabel() const
 {
     return true;
 }
 
-bool CCGQuotient::isQuotient()
+bool CCGQuotient::isQuotient() const
 {
     return true;
 }
 
-bool CCGQuotient::isLeft()
+bool CCGQuotient::isLeft() const
 {
     return !right;
 }
 
-bool CCGQuotient::isRight()
+bool CCGQuotient::isRight() const
 {
     return right;
+}
+
+CCGQuotient::~CCGQuotient()
+{
+    delete num;
+    delete denom;
 }
 

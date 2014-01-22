@@ -27,7 +27,8 @@ class CCGTypeError : public exception
 {
     public:
         CCGTypeError(string what);
-        const char* what() const;
+        const char* what() const throw ();
+        ~CCGTypeError() throw ();
     private:
         string mWhat;
 };
@@ -55,11 +56,14 @@ class CCGCat
             return false;
         }
 
-        virtual string toString() const = 0;
+        virtual string toString() const
+        {
+            return "<null>";
+        }
 
-        static CCGCat parse(string str);
+        static CCGCat* parse(string str);
     private:
-        static pair<CCGCat,string> parseLeast(string str);
+        static pair<CCGCat*,int> parseLeast(string &str, int start);
 };
 
 class CCGLabel : public CCGCat
@@ -78,10 +82,11 @@ class CCGQuotient : public CCGCat
 {
     public:
         // right = true corresponds to /
-        CCGQuotient(CCGCat &num, CCGCat &denom, bool right);
+        CCGQuotient(CCGCat* num, CCGCat* denom, bool right);
+        ~CCGQuotient();
 
-        CCGCat num;
-        CCGCat denom;
+        CCGCat* num;
+        CCGCat* denom;
         bool right;
 
         string toString() const;
