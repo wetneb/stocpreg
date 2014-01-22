@@ -5,16 +5,10 @@
 #include "pregroup.h"
 #include "lexiconentry.h"
 #include "lexicon.h"
+#include "morphism.h"
 
-class PrgGrpMorphism
-{
-    public:
-        //! Image of a complex type under the canonical forgetful morphism
-        static AbelianType translate(const ComplexType &t);
-        //! Image of a lexicon entry under the same morphism
-        static LexiconEntry<AbelianType> translate(const LexiconEntry<ComplexType> &entry);
-        //! Image of a lexicon under the same morphism
-        static Lexicon<AbelianType> translate(const Lexicon<ComplexType> &lex);
-};
+//! Image of a complex type under the canonical forgetful morphism
+template<>
+AbelianType translateType<ComplexType,AbelianType>(const ComplexType &t);
 
 #endif

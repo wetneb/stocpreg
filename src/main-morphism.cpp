@@ -19,7 +19,7 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    LexiconEntry<AbelianType> translated = PrgGrpMorphism::translate(defaultEntry);
+    LexiconEntry<AbelianType> translated = translateEntry<ComplexType,AbelianType>(defaultEntry);
 
     cout << translated.toString() << flush;
 
