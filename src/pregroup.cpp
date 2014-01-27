@@ -162,7 +162,11 @@ string ComplexType::toString() const
     ostringstream out;
 
     for(ComplexType::const_iterator it = begin(); it != end(); it++)
+    {
+        if(it != begin())
+            out << " ";
         out << it->toString();
+    }
 
     return out.str();
 }

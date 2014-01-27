@@ -30,7 +30,11 @@ CCGCat* CCGCat::parse(string str)
 
 bool admissibleCharForType(char c)
 {
-    return isupper(c) || c == ',' || c == '.';
+    return isalpha(c)
+        || c == ','
+        || c == '.'
+        || c == ':'
+        || c == ';';
 }
 
 pair<CCGCat*,int> CCGCat::parseLeast(string &str, int start)

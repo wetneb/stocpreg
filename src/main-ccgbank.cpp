@@ -42,17 +42,23 @@ vector<pair<string, CCGCat*> > parseCCGBankLine(string &line)
 
 int main(int argc, char** argv)
 {
-    string ccgline;
-    getline(cin, ccgline);
-    vector<pair<string, CCGCat*> > assignments = parseCCGBankLine(ccgline);
-
-    for(vector<pair<string, CCGCat*> >::iterator it = assignments.begin();
-            it != assignments.end(); ++it)
+    while(cin.good())
     {
-        const CCGCat* category = it->second;
-        ComplexType translated = GrammarMorphism<CCGCat*,ComplexType>::translateType(category);
-        cout << it->first << " : " << it->second->toString() << " : " << translated.toString() << endl;
-        delete it->second;
+        string ccgline;
+        getline(cin, ccgline);
+        if(ccgline.size() < 3 || ccgline[0] != 'I' || ccgline[1] != 'D' || ccgline[2] != '=')
+        {
+            vector<pair<string, CCGCat*> > assignments = parseCCGBankLine(ccgline);
+
+            for(vector<pair<string, CCGCat*> >::iterator it = assignments.begin();
+                    it != assignments.end(); ++it)
+            {
+                const CCGCat* category = it->second;
+                ComplexType translated = GrammarMorphism<CCGCat*,ComplexType>::translateType(category);
+                cout << it->first << "\t" << it->second->toString() << "\t" << translated.toString() << endl;
+                delete it->second;
+            }
+        }
     }
 
     return 0;
