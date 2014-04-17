@@ -20,3 +20,26 @@ aclocal.m4
 config.status
 src/.dirstamp
 
+# Custom
+statistics
+wittgenstein
+comparisons
+basic_typeset
+ccgline
+depcomp
+jbm
+learner
+missing
+morphism
+out
+parser
+sentences
+small-grammar
+stanford
+trained_lexicon
+wsj_0001.auto
+*.swo
+ccgbank
+Makefile
+
+
