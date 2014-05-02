@@ -45,3 +45,6 @@ Makefile
 
 degenerated_typeset
 install-sh
+
+# Vim files
+*.swp
