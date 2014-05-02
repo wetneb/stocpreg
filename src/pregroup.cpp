@@ -4,12 +4,12 @@ Pregroup* Pregroup::mGlobalPregroup = NULL;
 
 Pregroup::Pregroup()
 {
-    
+        
 }
 
 Pregroup::~Pregroup()
 {
-
+    
 }
 
 bool Pregroup::load(string filename)
@@ -47,19 +47,21 @@ bool Pregroup::less(const string &lhs, const string &rhs)
     return (lhs == rhs || strictlyLess(lhs, rhs));
 }
 
-SimpleType::SimpleType(string baseType, int exponent) :
+SimpleType::SimpleType(string baseType, int exponent, string annotation) :
     exponent(exponent),
-    baseType(baseType)
+    baseType(baseType),
+    annotation(annotation)
 {
     ;
 }
+
 
 bool SimpleType::lessThan(const SimpleType &rhs) const
 {
 	return
     	(exponent == rhs.exponent && (
-	 (exponent % 2 == 0 && Pregroup::less(baseType, rhs.baseType)) ||
-	 (exponent % 2 != 0 && Pregroup::less(rhs.baseType, baseType))
+	 (exponent % 2 == 0 && Pregroup::less(fullType(), rhs.fullType())) ||
+	 (exponent % 2 != 0 && Pregroup::less(rhs.fullType(), fullType()))
 	));	 
 }
 
@@ -67,14 +69,14 @@ bool SimpleType::strictlyLessThan(const SimpleType &rhs) const
 {
 	return
     	(exponent == rhs.exponent && (
-	 (exponent % 2 == 0 && Pregroup::strictlyLess(baseType, rhs.baseType)) ||
-	 (exponent % 2 == 1 && Pregroup::strictlyLess(rhs.baseType, baseType))
+	 (exponent % 2 == 0 && Pregroup::strictlyLess(fullType(), rhs.fullType())) ||
+	 (exponent % 2 == 1 && Pregroup::strictlyLess(rhs.fullType(), fullType()))
 	));	 
 }
 
 bool SimpleType::operator<(const SimpleType &rhs) const
 {
-    return (exponent < rhs.exponent || (exponent == rhs.exponent && baseType < rhs.baseType));
+    return (exponent < rhs.exponent || (exponent == rhs.exponent && fullType() < rhs.fullType()));
 }
 
 bool SimpleType::gcon(const SimpleType &rhs) const
@@ -101,10 +103,20 @@ SimpleType SimpleType::rightAdjoint() const
     return res;
 }
 
-string SimpleType::toString() const
+string SimpleType::fullType() const
 {
     ostringstream out;
     out << baseType;
+
+    if(annotation != "")
+        out << "[" << annotation << "]";
+    return out.str();
+}
+
+string SimpleType::toString(bool annotation) const
+{
+    ostringstream out;
+    out << (annotation ? fullType() : baseType);
 
     if(exponent)
     {
@@ -126,10 +138,19 @@ bool SimpleType::fromString(const string &str)
     baseType = "";
     char c = '\0';
     in >> c;
-    while(in.good() && c != '(')
+    while(in.good() && c != '(' && c != '[')
     {
         baseType += c;
         in >> c;
+    }
+
+    if(c == '[')
+    {
+        while(in.good() && c != ']')
+        {
+            in >> c;
+            annotation += c;
+        }
     }
     
     exponent = 0;
@@ -157,7 +178,7 @@ ComplexType::ComplexType(SimpleType t)
     push_back(t);
 }
 
-string ComplexType::toString() const
+string ComplexType::toString(bool annotation) const
 {
     ostringstream out;
 
@@ -165,7 +186,7 @@ string ComplexType::toString() const
     {
         if(it != begin())
             out << " ";
-        out << it->toString();
+        out << it->toString(annotation);
     }
 
     return out.str();

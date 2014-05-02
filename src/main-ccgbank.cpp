@@ -58,7 +58,7 @@ int main(int argc, char** argv)
             {
                 const CCGCat* category = it->second;
                 ComplexType translated = GrammarMorphism<CCGCat*,ComplexType>::translateType(category);
-                cout << it->first << "\t" << it->second->toString(!noAnnotations) << "\t" << translated.toString() << endl;
+                cout << it->first << "\t" << it->second->toString(!noAnnotations) << "\t" << translated.toString(!noAnnotations) << endl;
                 delete it->second;
             }
         }

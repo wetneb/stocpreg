@@ -45,7 +45,7 @@ class Pregroup : public set<pair<string,string> >
 class SimpleType
 {
     public:
-    	SimpleType(string baseType = "", int exponent = 0);
+    	SimpleType(string baseType = "", int exponent = 0, string annotation = "");
 
         //! Is this type less than this other type ?
 	    bool lessThan(const SimpleType &rhs) const;
@@ -62,12 +62,13 @@ class SimpleType
         //! Get the right adjoint of this type
         SimpleType rightAdjoint() const;
 
-        string toString() const;
+        string fullType() const;
+        string toString(bool annotation = true) const;
         bool fromString(const string &str);
 
 	    int exponent;
 	    string baseType;
-
+        string annotation;
 
     private:
         friend class boost::serialization::access;
@@ -77,6 +78,7 @@ class SimpleType
         {
             ar & baseType;
             ar & exponent;
+            ar & annotation;
         }
 };
 
@@ -99,7 +101,7 @@ class ComplexType : public list<SimpleType>
         bool operator<(const ComplexType &rhs) const;
 //        bool operator==(const ComplexType &rhs) const;
 
-	    string toString() const;
+	    string toString(bool annotation = true) const;
         bool fromString(const string &str);
         
     private: 

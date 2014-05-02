@@ -15,7 +15,10 @@ class GrammarMorphism<T*,ComplexType>
     {
         ComplexType res;
         if(t->isLabel())
-            res.push_back(t->toString());
+        {
+            CCGLabel* lbl = (CCGLabel*)t;
+            res.push_back(SimpleType(lbl->mainType,0,lbl->annotation));
+        }
         else
         {
             CCGQuotient* quo = (CCGQuotient*)t;
