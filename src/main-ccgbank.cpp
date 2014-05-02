@@ -42,6 +42,9 @@ vector<pair<string, CCGCat*> > parseCCGBankLine(string &line)
 
 int main(int argc, char** argv)
 {
+    bool noAnnotations = (argc > 1);
+
+
     while(cin.good())
     {
         string ccgline;
@@ -55,7 +58,7 @@ int main(int argc, char** argv)
             {
                 const CCGCat* category = it->second;
                 ComplexType translated = GrammarMorphism<CCGCat*,ComplexType>::translateType(category);
-                cout << it->first << "\t" << it->second->toString() << "\t" << translated.toString() << endl;
+                cout << it->first << "\t" << it->second->toString(!noAnnotations) << "\t" << translated.toString() << endl;
                 delete it->second;
             }
         }

@@ -92,9 +92,9 @@ CCGLabel::CCGLabel(string mainType, string annotation) :
 
 }
 
-string CCGLabel::toString() const
+string CCGLabel::toString(bool annotations) const
 {
-    if(annotation == "")
+    if(annotation == "" || !annotations)
         return mainType;
     else
         return (mainType + "["+annotation+"]");
@@ -108,9 +108,9 @@ CCGQuotient::CCGQuotient(CCGCat* n, CCGCat* d, bool r) :
 
 }
 
-string CCGQuotient::toString() const
+string CCGQuotient::toString(bool annotations) const
 {
-    string first = num->toString(), second = denom->toString();
+    string first = num->toString(annotations), second = denom->toString(annotations);
     if(num->isQuotient())
         first = "(" + first + ")";
     if(denom->isQuotient())

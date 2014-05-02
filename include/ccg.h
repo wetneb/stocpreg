@@ -56,7 +56,7 @@ class CCGCat
             return false;
         }
 
-        virtual string toString() const
+        virtual string toString(bool annotations = true) const
         {
             return "<null>";
         }
@@ -74,7 +74,7 @@ class CCGLabel : public CCGCat
         string mainType;
         string annotation;
 
-        string toString() const;
+        string toString(bool annotations = true) const;
         bool isLabel() const;
 };
 
@@ -89,7 +89,7 @@ class CCGQuotient : public CCGCat
         const CCGCat* denom;
         const bool right;
 
-        string toString() const;
+        string toString(bool annotations = true) const;
         bool isQuotient() const;
         bool isLeft() const;
         bool isRight() const;

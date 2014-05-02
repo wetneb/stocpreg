@@ -22,6 +22,7 @@ src/.dirstamp
 
 # Custom
 statistics
+statistics-noannot
 wittgenstein
 comparisons
 basic_typeset
